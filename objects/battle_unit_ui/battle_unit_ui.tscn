@@ -1,0 +1,140 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scripts/battle/UnitUI.cs" type="Script" id=1]
+[ext_resource path="res://res/font/status_font.tres" type="DynamicFont" id=2]
+[ext_resource path="res://res/health_bar/fg.png" type="Texture" id=3]
+[ext_resource path="res://res/health_bar/border.png" type="Texture" id=4]
+[ext_resource path="res://res/health_bar/bg.png" type="Texture" id=6]
+[ext_resource path="res://res/font/status_font_small.tres" type="DynamicFont" id=7]
+
+[sub_resource type="ViewportTexture" id=1]
+
+[node name="BattleUnitUI" type="Control"]
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+_healthBarNode = NodePath("MainHudContainer/HealthBarController/HealthBarCenterer/HealthBar")
+_healthBarFadeNode = NodePath("MainHudContainer/HealthBarController/HealthBarCenterer/HealthBarFade")
+_fadeTimerNode = NodePath("MainHudContainer/HealthBarController/HealthDrainTimer")
+_fadeTweenNode = NodePath("MainHudContainer/HealthBarController/HealthDrainTween")
+_healthLabelNode = NodePath("MainHudContainer/HealthBarController/HealthBarLabel/HealthLabel")
+_healthMaxLabelNode = NodePath("MainHudContainer/HealthBarController/HealthBarLabel/HealthMaxLabel")
+_statusEffectContainerNode = NodePath("MainHudContainer/StatusEffectCenterer/StatusEffectIconController")
+
+[node name="MainHudContainer" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -40.0
+margin_right = 40.0
+margin_bottom = 45.0
+grow_horizontal = 2
+size_flags_vertical = 0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HealthBarController" type="VBoxContainer" parent="MainHudContainer"]
+margin_right = 80.0
+margin_bottom = 40.0
+custom_constants/separation = 0
+
+[node name="HealthBarCenterer" type="CenterContainer" parent="MainHudContainer/HealthBarController"]
+margin_right = 80.0
+margin_bottom = 16.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HealthBarFade" type="TextureProgress" parent="MainHudContainer/HealthBarController/HealthBarCenterer"]
+use_parent_material = true
+margin_left = 3.0
+margin_top = 3.0
+margin_right = 77.0
+margin_bottom = 13.0
+max_value = 10.0
+step = 0.0
+value = 4.0
+texture_progress = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HealthBar" type="TextureProgress" parent="MainHudContainer/HealthBarController/HealthBarCenterer"]
+use_parent_material = true
+margin_right = 80.0
+margin_bottom = 16.0
+value = 20.0
+texture_under = ExtResource( 4 )
+texture_progress = ExtResource( 3 )
+texture_progress_offset = Vector2( 3, 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="MainHudContainer/HealthBarController/HealthBarCenterer"]
+margin_left = 40.0
+margin_top = 8.0
+margin_right = 40.0
+margin_bottom = 8.0
+texture = SubResource( 1 )
+
+[node name="HealthBarLabel" type="MarginContainer" parent="MainHudContainer/HealthBarController"]
+margin_left = 24.0
+margin_top = 16.0
+margin_right = 56.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 32, 24 )
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="HealthMaxLabel" type="Label" parent="MainHudContainer/HealthBarController/HealthBarLabel"]
+margin_right = 32.0
+margin_bottom = 24.0
+size_flags_vertical = 1
+custom_colors/font_color = Color( 0.627451, 0.627451, 0.627451, 1 )
+custom_fonts/font = ExtResource( 7 )
+text = "15"
+align = 2
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HealthLabel" type="Label" parent="MainHudContainer/HealthBarController/HealthBarLabel"]
+margin_right = 32.0
+margin_bottom = 24.0
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 2 )
+text = "15"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HealthDrainTimer" type="Timer" parent="MainHudContainer/HealthBarController"]
+wait_time = 0.25
+one_shot = true
+
+[node name="HealthDrainTween" type="Tween" parent="MainHudContainer/HealthBarController"]
+
+[node name="StatusEffectCenterer" type="CenterContainer" parent="MainHudContainer"]
+margin_top = 44.0
+margin_right = 80.0
+margin_bottom = 45.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StatusEffectIconController" type="HBoxContainer" parent="MainHudContainer/StatusEffectCenterer"]
+margin_left = 40.0
+margin_right = 40.0
+alignment = 1
+
+[connection signal="timeout" from="MainHudContainer/HealthBarController/HealthDrainTimer" to="." method="OnDrainTimerDone"]

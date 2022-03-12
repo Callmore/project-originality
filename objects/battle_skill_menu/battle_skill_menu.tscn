@@ -1,0 +1,282 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/battle/BattleSkillMenuController.cs" type="Script" id=1]
+
+[node name="BattleSkillMenuController" type="Control"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SkillMenuPanel" type="PanelContainer" parent="."]
+margin_right = 187.0
+margin_bottom = 256.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SkillMenuPanel"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 180.0
+margin_bottom = 249.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="SkillMenuPanel/VBoxContainer"]
+margin_right = 173.0
+margin_bottom = 14.0
+text = "Select skill"
+align = 1
+valign = 1
+
+[node name="ButtonBasicAttack" type="Button" parent="SkillMenuPanel/VBoxContainer"]
+margin_top = 18.0
+margin_right = 173.0
+margin_bottom = 46.0
+focus_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Basic Attack"
+
+[node name="ButtonBasicDefense" type="Button" parent="SkillMenuPanel/VBoxContainer"]
+margin_top = 50.0
+margin_right = 173.0
+margin_bottom = 79.0
+focus_mode = 0
+size_flags_vertical = 3
+text = "Basic Defense"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonCharacterSkill" type="Button" parent="SkillMenuPanel/VBoxContainer"]
+margin_top = 83.0
+margin_right = 173.0
+margin_bottom = 111.0
+focus_mode = 0
+size_flags_vertical = 3
+text = "Character skill"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonAbility1" type="Button" parent="SkillMenuPanel/VBoxContainer"]
+margin_top = 115.0
+margin_right = 173.0
+margin_bottom = 144.0
+focus_mode = 0
+size_flags_vertical = 3
+text = "Ability 1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonAbility2" type="Button" parent="SkillMenuPanel/VBoxContainer"]
+margin_top = 148.0
+margin_right = 173.0
+margin_bottom = 176.0
+focus_mode = 0
+size_flags_vertical = 3
+text = "Ability 2"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonAbility3" type="Button" parent="SkillMenuPanel/VBoxContainer"]
+margin_top = 180.0
+margin_right = 173.0
+margin_bottom = 209.0
+rect_pivot_offset = Vector2( -291, -232 )
+focus_mode = 0
+size_flags_vertical = 3
+text = "Ability 3"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonUltimate" type="Button" parent="SkillMenuPanel/VBoxContainer"]
+margin_top = 213.0
+margin_right = 173.0
+margin_bottom = 242.0
+rect_pivot_offset = Vector2( -291, -232 )
+focus_mode = 0
+size_flags_vertical = 3
+text = "Ultimate"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TargetSelectorPanel" type="PanelContainer" parent="."]
+margin_left = 195.0
+margin_right = 341.0
+margin_bottom = 232.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TargetSelectorPanel"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 191.0
+margin_bottom = 249.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TargetSelectorPanel/VBoxContainer"]
+margin_right = 184.0
+margin_bottom = 20.0
+
+[node name="ButtonCancel" type="Button" parent="TargetSelectorPanel/VBoxContainer/HBoxContainer"]
+margin_right = 54.0
+margin_bottom = 20.0
+text = "Cancel"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="TargetSelectorPanel/VBoxContainer/HBoxContainer"]
+margin_left = 58.0
+margin_top = 3.0
+margin_right = 184.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Select target"
+align = 1
+valign = 1
+
+[node name="GridContainer" type="GridContainer" parent="TargetSelectorPanel/VBoxContainer"]
+margin_top = 24.0
+margin_right = 184.0
+margin_bottom = 242.0
+columns = 3
+
+[node name="Control" type="Control" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_right = 48.0
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_left = 52.0
+margin_right = 116.0
+margin_bottom = 14.0
+text = "Front"
+align = 1
+valign = 2
+
+[node name="Label2" type="Label" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_left = 120.0
+margin_right = 184.0
+margin_bottom = 14.0
+text = "Back"
+align = 1
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="Label" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_top = 43.0
+margin_right = 48.0
+margin_bottom = 57.0
+text = "Top"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button2" type="Button" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_left = 52.0
+margin_top = 18.0
+margin_right = 116.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 64, 64 )
+focus_mode = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_left = 120.0
+margin_top = 18.0
+margin_right = 184.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 64, 64 )
+focus_mode = 0
+
+[node name="Label4" type="Label" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_top = 111.0
+margin_right = 48.0
+margin_bottom = 125.0
+text = "Middle"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button4" type="Button" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_left = 52.0
+margin_top = 86.0
+margin_right = 116.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 64, 64 )
+focus_mode = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button3" type="Button" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_left = 120.0
+margin_top = 86.0
+margin_right = 184.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 64, 64 )
+focus_mode = 0
+
+[node name="Label5" type="Label" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_top = 179.0
+margin_right = 48.0
+margin_bottom = 193.0
+text = "Bottom"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button6" type="Button" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_left = 52.0
+margin_top = 154.0
+margin_right = 116.0
+margin_bottom = 218.0
+rect_min_size = Vector2( 64, 64 )
+focus_mode = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button5" type="Button" parent="TargetSelectorPanel/VBoxContainer/GridContainer"]
+margin_left = 120.0
+margin_top = 154.0
+margin_right = 184.0
+margin_bottom = 218.0
+rect_min_size = Vector2( 64, 64 )
+focus_mode = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="SkillMenuPanel/VBoxContainer/ButtonBasicAttack" to="." method="HandleSkillButtonPush" binds= [ "BasicAttack" ]]
+[connection signal="pressed" from="SkillMenuPanel/VBoxContainer/ButtonBasicDefense" to="." method="HandleSkillButtonPush" binds= [ "BasicDefense" ]]
+[connection signal="pressed" from="SkillMenuPanel/VBoxContainer/ButtonCharacterSkill" to="." method="HandleSkillButtonPush" binds= [ "CharacterSkill" ]]
+[connection signal="pressed" from="SkillMenuPanel/VBoxContainer/ButtonAbility1" to="." method="HandleSkillButtonPush" binds= [ "Ability1" ]]
+[connection signal="pressed" from="SkillMenuPanel/VBoxContainer/ButtonAbility2" to="." method="HandleSkillButtonPush" binds= [ "Ability2" ]]
+[connection signal="pressed" from="SkillMenuPanel/VBoxContainer/ButtonAbility3" to="." method="HandleSkillButtonPush" binds= [ "Ability3" ]]
+[connection signal="pressed" from="SkillMenuPanel/VBoxContainer/ButtonUltimate" to="." method="HandleSkillButtonPush" binds= [ "Ultimate" ]]
+[connection signal="pressed" from="TargetSelectorPanel/VBoxContainer/HBoxContainer/ButtonCancel" to="." method="HandleTargetSelectorCancelButton"]
+[connection signal="pressed" from="TargetSelectorPanel/VBoxContainer/GridContainer/Button2" to="." method="HandleTargetSelectorButton" binds= [ 1, 0 ]]
+[connection signal="pressed" from="TargetSelectorPanel/VBoxContainer/GridContainer/Button" to="." method="HandleTargetSelectorButton" binds= [ 0, 0 ]]
+[connection signal="pressed" from="TargetSelectorPanel/VBoxContainer/GridContainer/Button4" to="." method="HandleTargetSelectorButton" binds= [ 1, 1 ]]
+[connection signal="pressed" from="TargetSelectorPanel/VBoxContainer/GridContainer/Button3" to="." method="HandleTargetSelectorButton" binds= [ 0, 1 ]]
+[connection signal="pressed" from="TargetSelectorPanel/VBoxContainer/GridContainer/Button6" to="." method="HandleTargetSelectorButton" binds= [ 1, 2 ]]
+[connection signal="pressed" from="TargetSelectorPanel/VBoxContainer/GridContainer/Button5" to="." method="HandleTargetSelectorButton" binds= [ 0, 2 ]]
