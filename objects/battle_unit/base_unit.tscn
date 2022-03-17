@@ -1,12 +1,6 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/battle/unit/Unit.cs" type="Script" id=1]
-[ext_resource path="res://res/health_bar/border.png" type="Texture" id=3]
-[ext_resource path="res://res/health_bar/fg.png" type="Texture" id=4]
-[ext_resource path="res://res/health_bar/bg.png" type="Texture" id=5]
-[ext_resource path="res://res/gameicons/breaking-chain.png" type="Texture" id=6]
-[ext_resource path="res://res/font/status_font.tres" type="DynamicFont" id=7]
-[ext_resource path="res://objects/status_effect/effects/block.tscn" type="PackedScene" id=8]
 [ext_resource path="res://scripts/battle/status/StatusEffectController.cs" type="Script" id=9]
 
 [sub_resource type="Animation" id=1]
@@ -178,100 +172,8 @@ anims/Hurt = SubResource( 3 )
 anims/HurtEnemy = SubResource( 4 )
 anims/RESET = SubResource( 5 )
 
-[node name="HealthBarController" type="Control" parent="."]
-visible = false
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HealthBarFade" type="TextureProgress" parent="HealthBarController"]
-margin_left = -40.0
-margin_top = 4.0
-margin_right = 40.0
-margin_bottom = 20.0
-step = 0.0
-value = 26.0
-texture_progress = ExtResource( 5 )
-texture_progress_offset = Vector2( 3, 3 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HealthBar" type="TextureProgress" parent="HealthBarController"]
-margin_left = -40.0
-margin_top = 4.0
-margin_right = 40.0
-margin_bottom = 20.0
-value = 20.0
-texture_under = ExtResource( 3 )
-texture_progress = ExtResource( 4 )
-texture_progress_offset = Vector2( 3, 3 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HealthDrainTimer" type="Timer" parent="HealthBarController"]
-wait_time = 0.25
-one_shot = true
-
-[node name="HealthDrainTween" type="Tween" parent="HealthBarController"]
-
-[node name="CenterContainer" type="CenterContainer" parent="."]
-visible = false
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -28.0
-margin_top = 34.0
-margin_right = 28.0
-margin_bottom = 66.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
-margin_left = 12.0
-margin_right = 44.0
-margin_bottom = 32.0
-
-[node name="HBoxContainer" type="Control" parent="CenterContainer/HBoxContainer"]
-margin_right = 32.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 32, 32 )
-
-[node name="Breaking-chain" type="TextureRect" parent="CenterContainer/HBoxContainer/HBoxContainer"]
-modulate = Color( 0.772549, 0.560784, 0.054902, 1 )
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -16.0
-margin_top = -16.0
-margin_right = 16.0
-margin_bottom = 16.0
-texture = ExtResource( 6 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="CenterContainer/HBoxContainer/HBoxContainer"]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -32.0
-margin_bottom = 32.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_fonts/font = ExtResource( 7 )
-text = "3"
-align = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="StatusEffectController" type="Node" parent="."]
 script = ExtResource( 9 )
 
-[node name="StatusEffectBlock" parent="StatusEffectController" instance=ExtResource( 8 )]
-
 [connection signal="timeout" from="AttackWindupTimer" to="." method="AttackWindupTimerFinished"]
 [connection signal="timeout" from="AttackRecoverTimer" to="." method="AttackRecoverTimerFinished"]
-[connection signal="timeout" from="HealthBarController/HealthDrainTimer" to="HealthBarController" method="OnDrainTimerDone"]

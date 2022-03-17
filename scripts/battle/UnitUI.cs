@@ -113,12 +113,10 @@ namespace ProjectOriginality.Battle
         public void OnStatusAdded(StatusEffect status)
         {
             // Create a new status icon
-            Control statusUI = _statusEffectUI.Instance<Control>();
-
-            statusUI.GetNode<TextureRect>("StatusImage").Texture = status.Icon;
-            statusUI.GetNode<Label>("StacksLabel").Text = $"{status.Stacks}";
-
+            StatusIcon statusUI = _statusEffectUI.Instance<StatusIcon>();
             _statusEffectContainer.AddChild(statusUI);
+
+            statusUI.Initialise(status);
         }
     }
 

@@ -10,9 +10,28 @@ namespace ProjectOriginality.Battle
         [Signal]
         public delegate void BattleSkillMenuUsedSkill(SkillSlot skill, int targetX, int targetY);
 
+        // Exports
+        [Export]
+        private NodePath _buttonBasicAttackNode = "";
+        [Export]
+        private NodePath _buttonBasicDefenseNode = "";
+        [Export]
+        private NodePath _buttonCharacterSkillNode = "";
+        [Export]
+        private NodePath _buttonAbility1Node = "";
+        [Export]
+        private NodePath _buttonAbility2Node = "";
+        [Export]
+        private NodePath _buttonAbility3Node = "";
+        [Export]
+        private NodePath _buttonUltimateNode = "";
+        [Export]
+        private PackedScene _targetSelectorMenuObj = null;
+
         private Unit _targetUnit;
         private SkillSlot _selectedSkill;
         private (Button, SkillSlot)[] _allSkillButtons;
+        private BattleTargetSelectorController _targetSelector;
 
         static private SkillSlot GetSkillFromString(string skillString)
         {
@@ -40,18 +59,24 @@ namespace ProjectOriginality.Battle
         public override void _Ready()
         {
             base._Ready();
-            GetNode<PanelContainer>("SkillMenuPanel").Hide();
-            GetNode<PanelContainer>("TargetSelectorPanel").Hide();
+            Hide();
+            //GetNode<PanelContainer>(_TargetSelectorPanelNode).Hide();
 
             _allSkillButtons = new[] {
-            (GetNode<Button>("SkillMenuPanel/VBoxContainer/ButtonBasicAttack"), SkillSlot.BasicAttack),
-            (GetNode<Button>("SkillMenuPanel/VBoxContainer/ButtonBasicDefense"), SkillSlot.BasicDefense),
-            (GetNode<Button>("SkillMenuPanel/VBoxContainer/ButtonCharacterSkill"), SkillSlot.CharacterSkill),
-            (GetNode<Button>("SkillMenuPanel/VBoxContainer/ButtonAbility1"), SkillSlot.Ability1),
-            (GetNode<Button>("SkillMenuPanel/VBoxContainer/ButtonAbility2"), SkillSlot.Ability2),
-            (GetNode<Button>("SkillMenuPanel/VBoxContainer/ButtonAbility3"), SkillSlot.Ability3),
-            (GetNode<Button>("SkillMenuPanel/VBoxContainer/ButtonUltimate"), SkillSlot.Ultimate),
-        };
+                (GetNode<Button>(_buttonBasicAttackNode), SkillSlot.BasicAttack),
+                (GetNode<Button>(_buttonBasicDefenseNode), SkillSlot.BasicDefense),
+                (GetNode<Button>(_buttonCharacterSkillNode), SkillSlot.CharacterSkill),
+                (GetNode<Button>(_buttonAbility1Node), SkillSlot.Ability1),
+                (GetNode<Button>(_buttonAbility2Node), SkillSlot.Ability2),
+                (GetNode<Button>(_buttonAbility3Node), SkillSlot.Ability3),
+                (GetNode<Button>(_buttonUltimateNode), SkillSlot.Ultimate),
+            };
+
+            // Connect all the skill buttons to the appropiate function call
+            foreach (var btn in _allSkillButtons)
+            {
+                btn.Item1.Connect("pressed", this, nameof(HandleSkillButtonPush), new Godot.Collections.Array { btn.Item2 });
+            }
         }
 
         /// <summary>
@@ -79,7 +104,7 @@ namespace ProjectOriginality.Battle
 
         public void StartSkillMenu(Unit unit)
         {
-            GetNode<PanelContainer>("SkillMenuPanel").Show();
+            Show();
 
             _targetUnit = unit;
 
@@ -89,13 +114,22 @@ namespace ProjectOriginality.Battle
         private void ExitSkillMenu()
         {
             DisableSkillButtons();
-            GetNode<PanelContainer>("SkillMenuPanel").Hide();
-            GetNode<PanelContainer>("TargetSelectorPanel").Hide();
+            Hide();
         }
 
-        public void HandleSkillButtonPush(string skillString)
+        private void SpawnTargetSelector()
         {
-            SkillSlot skill = GetSkillFromString(skillString);
+            Global.Assert(_targetSelector == null || !IsInstanceValid(_targetSelector));
+
+            var targetSelector = _targetSelectorMenuObj.Instance<BattleTargetSelectorController>();
+            targetSelector.Connect(nameof(BattleTargetSelectorController.Canceled), this, nameof(HandleTargetSelectorCancelButton));
+            targetSelector.Connect(nameof(BattleTargetSelectorController.PressedLocation), this, nameof(HandleTargetSelectorButton));
+            GetParent().AddChild(targetSelector);
+        }
+
+        public void HandleSkillButtonPush(SkillSlot skill)
+        {
+            //SkillSlot skill = GetSkillFromString(skillString);
 
             GD.Print(skill);
 
@@ -114,13 +148,12 @@ namespace ProjectOriginality.Battle
             else
             {
                 // Single target, display the target menu.
-                GetNode<PanelContainer>("TargetSelectorPanel").Show();
+                SpawnTargetSelector();
             }
         }
 
         public void HandleTargetSelectorCancelButton()
         {
-            GetNode<PanelContainer>("TargetSelectorPanel").Hide();
             EnableSkillButtons();
         }
 

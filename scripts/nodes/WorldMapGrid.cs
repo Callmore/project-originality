@@ -8,8 +8,8 @@ namespace ProjectOriginality.Nodes
 {
     public class WorldMapGrid : Node
     {
-        private PackedScene _tile = GD.Load<PackedScene>("res://objects/world_map_tile/world_map_tile.tscn");
-        private PackedScene _unit = GD.Load<PackedScene>("res://objects/world_map_unit/world_map_unit.tscn");
+        private static PackedScene _tile = GD.Load<PackedScene>("res://objects/world_map_tile/world_map_tile.tscn");
+        private static PackedScene _unit = GD.Load<PackedScene>("res://objects/world_map_unit/world_map_unit.tscn");
 
         private const string TileGroup = "map_tile";
 

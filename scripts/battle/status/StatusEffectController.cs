@@ -4,6 +4,7 @@ using Godot;
 using ProjectOriginality.Enums;
 using ProjectOriginality.Models;
 using ProjectOriginality.Battle.Units;
+using System.Linq;
 
 namespace ProjectOriginality.Battle.Status
 {
@@ -25,18 +26,18 @@ namespace ProjectOriginality.Battle.Status
         public static Dictionary<StatusId, PackedScene> StatusIdToResource = new Dictionary<StatusId, PackedScene>()
         {
             [StatusId.Block] = GD.Load<PackedScene>("res://objects/status_effect/effects/block.tscn"),
-            [StatusId.Weak] = GD.Load<PackedScene>("res://objects/status_effect/effects/weak.tscn")
+            [StatusId.Weak] = GD.Load<PackedScene>("res://objects/status_effect/effects/weak.tscn"),
+            [StatusId.PowderBuff] = GD.Load<PackedScene>("res://objects/status_effect/effects/powder_buff.tscn"),
         };
 
-        public override void _Process(float delta)
+        public void Tick(float delta)
         {
-            base._Process(delta);
-
             foreach (StatusEffect status in GetChildren())
             {
+                status.Tick(delta);
                 if (status.ShouldBeRemoved())
                 {
-                    RemoveStatusEffect(status);
+                    //RemoveStatusEffect(status);
                 }
             }
         }
@@ -44,15 +45,14 @@ namespace ProjectOriginality.Battle.Status
         private void AddStatusEffect(PackedScene statusPacked, int stacks)
         {
             StatusEffect statusObject = statusPacked.Instance<StatusEffect>();
+            AddChild(statusObject);
+
             statusObject.OwningUnit = GetParent<Unit>();
+            GD.Print(stacks);
             if (stacks != -1)
             {
                 statusObject.InitStacks(stacks);
             }
-            AddChild(statusObject);
-
-            OnPause += statusObject.Pause;
-            OnUnpause += statusObject.Unpause;
 
             OnUnitReceveAttack += statusObject.OnUnitReceveAttack;
 
@@ -61,11 +61,6 @@ namespace ProjectOriginality.Battle.Status
 
         private void RemoveStatusEffect(StatusEffect status)
         {
-            OnPause -= status.Pause;
-            OnUnpause -= status.Unpause;
-
-            OnUnitReceveAttack -= status.OnUnitReceveAttack;
-
             status.QueueFree();
         }
 
@@ -74,7 +69,7 @@ namespace ProjectOriginality.Battle.Status
             GD.Print($"APPLYING STATUS {id}");
             if (!StatusIdToResource.ContainsKey(id))
             {
-                throw new ArgumentException($"Unknown status ID {nameof(id)}");
+                throw new ArgumentException($"Unknown status ID {id}");
             }
 
             IncreaseStatusEffect(id, stacks);
@@ -92,18 +87,21 @@ namespace ProjectOriginality.Battle.Status
 
         private void IncreaseStatusEffect(StatusId id, int stacks)
         {
+            GD.Print("Increasing");
             StatusEffect status = GetStatusEffectOrNull(id);
+            GD.Print(status);
             if (status != null)
             {
                 status.AddStacks(stacks);
             }
             else
             {
+                GD.Print("ADDING STATUS!!!");
                 AddStatusEffect(StatusIdToResource[id], stacks);
             }
         }
 
-        private StatusEffect GetStatusEffectOrNull(StatusId id)
+        public StatusEffect GetStatusEffectOrNull(StatusId id)
         {
             foreach (StatusEffect status in GetChildren())
             {
@@ -113,6 +111,11 @@ namespace ProjectOriginality.Battle.Status
                 }
             }
             return null;
+        }
+
+        public HashSet<(StatusId, int)> GetAllStatusesAndStacks()
+        {
+            return GetChildren().Cast<StatusEffect>().Select(status => (status.StatusId, status.Stacks)).ToHashSet();
         }
 
         public void PauseStatuses()

@@ -1,0 +1,163 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/battle/BattleTargetSelectorController.cs" type="Script" id=1]
+
+[node name="TargetSelectorPanel" type="PanelContainer"]
+margin_right = 198.0
+margin_bottom = 256.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 191.0
+margin_bottom = 249.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 184.0
+margin_bottom = 20.0
+
+[node name="ButtonCancel" type="Button" parent="VBoxContainer/HBoxContainer"]
+margin_right = 54.0
+margin_bottom = 20.0
+text = "Cancel"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_left = 58.0
+margin_top = 3.0
+margin_right = 184.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Select target"
+align = 1
+valign = 1
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
+margin_top = 24.0
+margin_right = 184.0
+margin_bottom = 242.0
+columns = 3
+
+[node name="Control" type="Control" parent="VBoxContainer/GridContainer"]
+margin_right = 48.0
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="VBoxContainer/GridContainer"]
+margin_left = 52.0
+margin_right = 116.0
+margin_bottom = 14.0
+text = "Front"
+align = 1
+valign = 2
+
+[node name="Label2" type="Label" parent="VBoxContainer/GridContainer"]
+margin_left = 120.0
+margin_right = 184.0
+margin_bottom = 14.0
+text = "Back"
+align = 1
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="Label" parent="VBoxContainer/GridContainer"]
+margin_top = 43.0
+margin_right = 48.0
+margin_bottom = 57.0
+text = "Top"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button2" type="Button" parent="VBoxContainer/GridContainer"]
+margin_left = 52.0
+margin_top = 18.0
+margin_right = 116.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 64, 64 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="VBoxContainer/GridContainer"]
+margin_left = 120.0
+margin_top = 18.0
+margin_right = 184.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 64, 64 )
+
+[node name="Label4" type="Label" parent="VBoxContainer/GridContainer"]
+margin_top = 111.0
+margin_right = 48.0
+margin_bottom = 125.0
+text = "Middle"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button4" type="Button" parent="VBoxContainer/GridContainer"]
+margin_left = 52.0
+margin_top = 86.0
+margin_right = 116.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 64, 64 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button3" type="Button" parent="VBoxContainer/GridContainer"]
+margin_left = 120.0
+margin_top = 86.0
+margin_right = 184.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 64, 64 )
+
+[node name="Label5" type="Label" parent="VBoxContainer/GridContainer"]
+margin_top = 179.0
+margin_right = 48.0
+margin_bottom = 193.0
+text = "Bottom"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button6" type="Button" parent="VBoxContainer/GridContainer"]
+margin_left = 52.0
+margin_top = 154.0
+margin_right = 116.0
+margin_bottom = 218.0
+rect_min_size = Vector2( 64, 64 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button5" type="Button" parent="VBoxContainer/GridContainer"]
+margin_left = 120.0
+margin_top = 154.0
+margin_right = 184.0
+margin_bottom = 218.0
+rect_min_size = Vector2( 64, 64 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/ButtonCancel" to="." method="OnCancelPressed"]
+[connection signal="pressed" from="VBoxContainer/GridContainer/Button2" to="." method="OnLocationPressed" binds= [ 1, 0 ]]
+[connection signal="pressed" from="VBoxContainer/GridContainer/Button" to="." method="OnLocationPressed" binds= [ 0, 0 ]]
+[connection signal="pressed" from="VBoxContainer/GridContainer/Button4" to="." method="OnLocationPressed" binds= [ 1, 1 ]]
+[connection signal="pressed" from="VBoxContainer/GridContainer/Button3" to="." method="OnLocationPressed" binds= [ 0, 1 ]]
+[connection signal="pressed" from="VBoxContainer/GridContainer/Button6" to="." method="OnLocationPressed" binds= [ 1, 2 ]]
+[connection signal="toggled" from="VBoxContainer/GridContainer/Button5" to="." method="OnLocationPressed" binds= [ 0, 2 ]]

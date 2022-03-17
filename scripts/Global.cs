@@ -5,23 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 using ProjectOriginality.Party;
 
-public static class Global
+namespace ProjectOriginality
 {
-    public static List<PartyMember> PlayerParty { get; } = new List<PartyMember>();
-
-    public static void Assert(bool test)
+    public static class Global
     {
-        if (!test)
+        public static List<PartyMember> PlayerParty { get; } = new List<PartyMember>();
+
+        public static void Assert(bool test)
         {
-            throw new Exception("Exception failed.");
+            if (!test)
+            {
+                throw new Exception("Exception failed.");
+            }
         }
-    }
 
-    public static void Assert(bool test, string message)
-    {
-        if (!test)
+        public static void Assert(bool test, string message)
         {
-            throw new Exception(message);
+            if (!test)
+            {
+                throw new Exception(message);
+            }
         }
     }
 }

@@ -9,6 +9,3 @@ script = ExtResource( 2 )
 EffectName = "Weak"
 EffectDescription = "Increases incoming damage by 50%."
 Icon = ExtResource( 3 )
-
-[node name="DecrementTimer" type="Timer" parent="." index="0"]
-autostart = true

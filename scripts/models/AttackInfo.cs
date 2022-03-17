@@ -24,5 +24,11 @@ namespace ProjectOriginality.Models
             Target = target;
             Statuses = applyStatuses ?? new (StatusId, int)[0];
         }
+
+        public AttackInfo ApplyModifier(BuffCalculator calc)
+        {
+            int newDamage = Damage != 0 ? calc.Calculate(Damage) : 0;
+            return new AttackInfo(newDamage, Heal, Target, Statuses);
+        }
     }
 }

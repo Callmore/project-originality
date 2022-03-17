@@ -24,8 +24,18 @@ namespace ProjectOriginality.Battle
         private Unit[,] _enemyBoard = new Unit[2, 3];
         private Node2D[,] _enemyBoardLocators = new Node2D[2, 3];
 
+        // Timer finished sets
+        public HashSet<Unit> WindupTimerFinished = new HashSet<Unit>();
+        public HashSet<Unit> RecoveryTimerFinished = new HashSet<Unit>();
+        public Queue<Unit> UnitRecoveryQueue = new Queue<Unit>();
+
+        // Timer pausing attrbutes
+        public bool TimerPaused { get; private set; } = false;
+        public bool InventoryOpen { get; private set; } = false;
+
         private static readonly PackedScene _objLocator = GD.Load<PackedScene>("res://objects/battle_locator/battle_locator.tscn");
         private static readonly PackedScene _objSkillMenu = GD.Load<PackedScene>("res://objects/battle_skill_menu/battle_skill_menu.tscn");
+        private static readonly PackedScene _objUnitBattleUI = GD.Load<PackedScene>("res://objects/battle_unit_ui/battle_unit_ui.tscn");
 
         private static readonly PackedScene _scnBattleSelect = GD.Load<PackedScene>("res://scenes/battle_select.tscn");
 
@@ -54,7 +64,7 @@ namespace ProjectOriginality.Battle
             unit.AddToGroup(GroupUnit);
 
             // Spawn a unit UI and add it to the hud layer.
-            UnitUI unitUI = GD.Load<PackedScene>("res://objects/battle_unit_ui/battle_unit_ui.tscn").Instance<UnitUI>();
+            UnitUI unitUI = _objUnitBattleUI.Instance<UnitUI>();
             GetNode<CanvasLayer>("HudLayer").AddChild(unitUI);
             Transform2D transform = unit.GetGlobalTransformWithCanvas();
             unitUI.RectPosition = transform.origin;
@@ -109,7 +119,6 @@ namespace ProjectOriginality.Battle
                 Unit enemyUnit = SpawnUnit(1, y, true, GD.Load<PackedScene>("res://objects/battle_unit/units/dev_enemy.tscn"));
                 enemyUnit.Enemy = true;
             }
-
         }
 
         private void SpawnAllUnits()
@@ -125,10 +134,53 @@ namespace ProjectOriginality.Battle
             SpawnAllUnits();
         }
 
+        public bool IsTimerPaused()
+        {
+            return TimerPaused || InventoryOpen;
+        }
+
+        public async void CheckForTimerFinishedAsync()
+        {
+            if (IsTimerPaused())
+            {
+                return;
+            }
+
+            if (WindupTimerFinished.Count > 0)
+            {
+                TimerPaused = true;
+                foreach (Unit unit in WindupTimerFinished.OrderBy(u => u.AttackWindupTimer))
+                {
+                    await unit.AttackWindupTimerFinished();
+                }
+                WindupTimerFinished.Clear();
+            }
+
+            if (RecoveryTimerFinished.Count > 0)
+            {
+                TimerPaused = true;
+                foreach (Unit unit in RecoveryTimerFinished.OrderBy(u => u.AttackRecoveryTimer).ThenBy(u => u.Enemy))
+                {
+                    UnitRecoveryQueue.Enqueue(unit);
+                }
+                RecoveryTimerFinished.Clear();
+            }
+            TimerPaused = false;
+        }
+
         // Called every frame. 'delta' is the elapsed time since the previous frame.
         public override void _Process(float delta)
         {
+            base._Process(delta);
 
+            CheckForTimerFinishedAsync();
+
+            if (!IsTimerPaused() && UnitRecoveryQueue.Count > 0)
+            {
+                TimerPaused = true;
+                Unit unit = UnitRecoveryQueue.Dequeue();
+                unit.AttackRecoverTimerFinished();
+            }
         }
 
         public async void OnUnitDoSkill(Unit unit)
@@ -146,11 +198,11 @@ namespace ProjectOriginality.Battle
             else
             {
                 /* TODO: Implement more target options
-                if (usedSkill.Activate.Target == SkillTarget.Single)
-                {
+				if (usedSkill.Activate.Target == SkillTarget.Single)
+				{
 
-                }
-                */
+				}
+				*/
 
             }
 
@@ -174,11 +226,22 @@ namespace ProjectOriginality.Battle
                 // Nothing else matched, this is a single target.
                 Unit targetUnit = GetUnitAt(targetBoard, unit.SkillBoardTarget);
                 Global.Assert(targetUnit != unit);
-                ApplyAttackInfo(targetUnit, usedSkill.Activate);
+                ApplyAttackInfo(targetUnit, usedSkill.Activate.ApplyModifier(unit.GetAttackModifierCalc())); // TODO: Rescale damage based on unit's damage bonus.
             }
 
             await ToSignal(GetTree().CreateTimer(1), "timeout");
             EmitSignal(nameof(ControllerWindupFinished));
+        }
+
+        public void UseItem(Inventory.InventoryItem item, int x, int y)
+        {
+            GD.Print(item);
+            BoardSide targetBoard = BoardSide.Enemy;
+            if (item.UseSkill.Activate.Target.HasFlag(SkillTarget.Friendly))
+            {
+                targetBoard = BoardSide.Player;
+            }
+            ApplyAttackInfo(GetUnitAt(targetBoard, x, y), item.UseSkill.Activate);
         }
 
         private bool ApplyAttackInfo(Unit unit, AttackInfo attackInfo)
@@ -188,6 +251,11 @@ namespace ProjectOriginality.Battle
                 if (attackInfo.Damage > 0)
                 {
                     unit.Hurt(attackInfo.Damage);
+                }
+
+                if (attackInfo.Heal > 0)
+                {
+                    unit.Heal(attackInfo.Heal);
                 }
 
                 foreach ((StatusId status, int stacks) in attackInfo.Statuses)
@@ -311,19 +379,31 @@ namespace ProjectOriginality.Battle
 
         public void PauseBattleTimers(bool paused = true)
         {
-            //GD.Print($"Paused = {paused}");
+            /*
+				//GD.Print($"Paused = {paused}");
 
-            foreach (Unit node in GetTree().GetNodesInGroup("unit"))
-            {
-                if (IsUnitAlive(node))
-                {
-                    node.GetNode<Timer>("AttackWindupTimer").Paused = paused;
-                    node.GetNode<Timer>("AttackRecoverTimer").Paused = paused;
-                }
-            }
+				foreach (Unit node in GetTree().GetNodesInGroup("unit"))
+				{
+					if (IsUnitAlive(node))
+					{
+						node.GetNode<Timer>("AttackWindupTimer").Paused = paused;
+						node.GetNode<Timer>("AttackRecoverTimer").Paused = paused;
+					}
+				}
+			*/
         }
 
-        #region Unit skill menu.
+        public void ResumeBattle()
+        {
+            TimerPaused = false;
+        }
+
+        public void OnInventoryToggled(bool opened)
+        {
+            InventoryOpen = opened;
+        }
+
+        #region Unit skill menu
 
         private Unit _unitWaitingForSkill;
 
@@ -346,10 +426,10 @@ namespace ProjectOriginality.Battle
             // TODO: Spawn an action pick menu with options on what to do.
             // Also link the correct signals back to this object to run and update the waiting object.
             /*
-            var skillMenu = _objSkillMenu.Instance<BattleSkillMenuController>();
-            GetParent().CallDeferred("add_child", skillMenu);
-            skillMenu.Connect(nameof(BattleSkillMenuController.BattleSkillMenuUsedSkill), this, nameof(HandleSkillMenuOptionSelected), flags: (uint)ConnectFlags.Oneshot);
-            */
+			var skillMenu = _objSkillMenu.Instance<BattleSkillMenuController>();
+			GetParent().CallDeferred("add_child", skillMenu);
+			skillMenu.Connect(nameof(BattleSkillMenuController.BattleSkillMenuUsedSkill), this, nameof(HandleSkillMenuOptionSelected), flags: (uint)ConnectFlags.Oneshot);
+			*/
             var skillMenu = GetNode<BattleSkillMenuController>("HudLayer/BattleSkillMenuController");
             skillMenu.Connect(nameof(BattleSkillMenuController.BattleSkillMenuUsedSkill), this, nameof(HandleSkillMenuOptionSelected), flags: (uint)ConnectFlags.Oneshot);
             skillMenu.StartSkillMenu(unit);
@@ -357,11 +437,7 @@ namespace ProjectOriginality.Battle
 
         public void HandleSkillMenuOptionSelected(SkillSlot skill, int targetX, int targetY)
         {
-            GD.Print(skill);
-
             Global.Assert(IsInstanceValid(_unitWaitingForSkill));
-
-            GD.Print($"{targetX}, {targetY}");
 
             _unitWaitingForSkill.UseSkill(skill, new Point(targetX, targetY));
         }

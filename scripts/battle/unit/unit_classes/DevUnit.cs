@@ -35,7 +35,7 @@ namespace ProjectOriginality.Battle.Units.UnitClasses
             windup: 2,
             cooldown: 6,
             usable: UnitCheckFunctions.AliveCheck,
-            activate: new AttackInfo(damage: 10, applyStatuses: new[] { (StatusId.Weak, -1) })
+            activate: new AttackInfo(damage: 1, applyStatuses: new[] { (StatusId.Weak, -1) })
         );
 
         protected override IEnemyAttack GetAIAttackScript() => null;

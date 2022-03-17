@@ -71,13 +71,11 @@ namespace ProjectOriginality.Battle.Units
 
         private bool _beenSetup = false;
 
-        private Timer _attackWindupTimer;
-        private Timer _attackRecoveryTimer;
+        public double AttackWindupTimer { get; private set; }
+        public double AttackRecoveryTimer { get; private set; }
 
         public UnitSkill QueuedSkill { get; private set; }
         public Point SkillBoardTarget { get; private set; }
-
-        private static Mutex _actionMutex = new Mutex();
 
         public bool Enemy
         {
@@ -94,6 +92,8 @@ namespace ProjectOriginality.Battle.Units
         private bool _enemy = false;
 
         public StatusEffectController StatusEffectController { get; private set; }
+
+        public bool Dead = false;
 
         // Animation variables
         private AnimationPlayer _animationPlayer;
@@ -116,8 +116,6 @@ namespace ProjectOriginality.Battle.Units
         {
             base._Ready();
 
-            _attackWindupTimer = GetNode<Timer>("AttackWindupTimer");
-            _attackRecoveryTimer = GetNode<Timer>("AttackRecoverTimer");
             _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
             _spriteNode = GetNode<Sprite>("Sprite");
             StatusEffectController = GetNode<StatusEffectController>("StatusEffectController");
@@ -136,7 +134,7 @@ namespace ProjectOriginality.Battle.Units
             SkillBoardTarget = new Point(1, 1);
 
             //_attackWindupTimer.Start(GD.Randf());
-            _attackRecoveryTimer.Start(GD.Randf());
+            AttackRecoveryTimer = GD.Randf();
 
             _AIAttackScript = GetAIAttackScript();
         }
@@ -144,6 +142,28 @@ namespace ProjectOriginality.Battle.Units
         public override void _Process(float delta)
         {
             base._Process(delta);
+
+            if (!Dead && !Controller.IsTimerPaused())
+            {
+                if (AttackWindupTimer > 0)
+                {
+                    AttackWindupTimer -= delta;
+                    if (AttackWindupTimer <= 0)
+                    {
+                        Controller.WindupTimerFinished.Add(this);
+                    }
+                }
+                else if (AttackRecoveryTimer > 0)
+                {
+                    AttackRecoveryTimer -= delta;
+                    if (AttackRecoveryTimer <= 0)
+                    {
+                        Controller.RecoveryTimerFinished.Add(this);
+                    }
+                }
+
+                StatusEffectController.Tick(delta);
+            }
         }
 
         public void UpdateStatsFromPartyMember(PartyMember member)
@@ -198,10 +218,9 @@ namespace ProjectOriginality.Battle.Units
             QueuedSkill = skill;
             SkillBoardTarget = target;
 
-            _attackWindupTimer.Start(Math.Max((float)QueuedSkill.Windup, 0.01f));
+            AttackWindupTimer = Math.Max(QueuedSkill.Windup, 0.01);
 
-            Controller.PauseBattleTimers(false);
-            _actionMutex.Unlock();
+            Controller.ResumeBattle();
         }
 
         public void Hurt(int amount)
@@ -211,20 +230,15 @@ namespace ProjectOriginality.Battle.Units
 
         public void Hurt(AttackInfo attack)
         {
-            // Pass the attack info object though the supply chain
 
             int amount = attack.Damage;
-            if (StatusEffectController.CheckStatusEffect(StatusId.Block))
-            {
-                amount = (int)Math.Ceiling((double)amount / 2);
-            }
-            if (StatusEffectController.CheckStatusEffect(StatusId.Weak))
-            {
-                amount *= 2;
-            }
+
 
             if (amount > 0)
             {
+                // Pass the attack info object though the supply chainain
+
+                amount = GetDefenseModifierCalc().Calculate(amount);
                 Health -= amount;
 
                 // Spawn the damage number
@@ -247,22 +261,41 @@ namespace ProjectOriginality.Battle.Units
             }
         }
 
+        public void Heal(int amount)
+        {
+            amount = Math.Min(amount, MaxHealth - Health);
+            if (amount > 0)
+            {
+                Health += amount;
+
+                // Spawn the damage number
+                Node2D dmgNumber = _objDamageNumber.Instance<Node2D>();
+                Label dmgLbl = dmgNumber.GetNode<Label>("Label");
+                AnimationPlayer animationPlayer = dmgNumber.GetNode<AnimationPlayer>("AnimationPlayer");
+                AddChild(dmgNumber);
+                dmgNumber.Position = Position + new Vector2(0, -64);
+                dmgLbl.Text = $"+{amount}";
+                animationPlayer.Play("Raise");
+            }
+        }
+
         public void ApplyStatus(StatusId id, int stacks = -1)
         {
             StatusEffectController.ApplyStatus(id, stacks);
         }
+
         private void Die()
         {
             OnDieFunc(this);
             PlayAnimation(UnitAnimation.Die);
-            _attackWindupTimer.Paused = true;
-            _attackRecoveryTimer.Paused = true;
+            Dead = true;
         }
 
         public bool SkillHasValidTarget(SkillSlot slot)
         {
             return SkillHasValidTarget(GetSkill(slot));
         }
+
         public bool SkillHasValidTarget(UnitSkill skill)
         {
             (BoardSide side, Point position) = Controller.FindUnitLocation(this);
@@ -336,15 +369,29 @@ namespace ProjectOriginality.Battle.Units
             GetNode<Sprite>("Sprite").FlipH = newFlip;
         }
 
-        public async void AttackWindupTimerFinished()
+        private IEnumerable<StatusEffect> GetAllStatusNodes()
         {
-            _actionMutex.Lock();
-            if (Controller == null || Controller.BattleOver)
-            {
-                _actionMutex.Unlock();
-                return;
-            }
+            return StatusEffectController.GetAllStatusesAndStacks().Select(pair => pair.Item1).Select(id => StatusEffectController.GetStatusEffectOrNull(id));
+        }
 
+        public BuffCalculator GetAttackModifierCalc(int min = 0, int max = int.MaxValue)
+        {
+            var allStatuses = GetAllStatusNodes();
+            BuffCalculator calc = new BuffCalculator(min, max);
+            calc.AddRange(allStatuses.Select(status => status.AttackModifier));
+            return calc;
+        }
+
+        public BuffCalculator GetDefenseModifierCalc(int min = 0, int max = int.MaxValue)
+        {
+            var allStatuses = GetAllStatusNodes();
+            BuffCalculator calc = new BuffCalculator(min, max);
+            calc.AddRange(allStatuses.Select(status => status.DefenseModifier));
+            return calc;
+        }
+
+        public async Task AttackWindupTimerFinished()
+        {
             Controller.PauseBattleTimers(true);
 
             PlayAnimation(UnitAnimation.Attack);
@@ -353,25 +400,15 @@ namespace ProjectOriginality.Battle.Units
             OnWindupTimerFinish(this);
             await ToSignal(Controller, nameof(BattleController.ControllerWindupFinished));
 
-            _attackRecoveryTimer.Start(Math.Max((float)QueuedSkill.RecoveryTime, 0.01f));
+            AttackRecoveryTimer = Math.Max(QueuedSkill.RecoveryTime, 0.01);
 
             Controller.PauseBattleTimers(false);
-            _actionMutex.Unlock();
         }
 
         public void AttackRecoverTimerFinished()
         {
-            _actionMutex.Lock();
-
-            if (Controller == null || Controller.BattleOver)
-            {
-                _actionMutex.Unlock();
-                return;
-            }
-
             Controller.PauseBattleTimers();
 
-            GD.Print(_enemy);
             if (!_enemy)
             {
                 OnRecoveryTimerFinish(this);

@@ -10,5 +10,6 @@ namespace ProjectOriginality.Enums
     {
         Block,
         Weak,
+        PowderBuff,
     }
 }

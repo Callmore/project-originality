@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scripts/battle/UnitUI.cs" type="Script" id=1]
 [ext_resource path="res://res/font/status_font.tres" type="DynamicFont" id=2]
@@ -6,8 +6,6 @@
 [ext_resource path="res://res/health_bar/border.png" type="Texture" id=4]
 [ext_resource path="res://res/health_bar/bg.png" type="Texture" id=6]
 [ext_resource path="res://res/font/status_font_small.tres" type="DynamicFont" id=7]
-
-[sub_resource type="ViewportTexture" id=1]
 
 [node name="BattleUnitUI" type="Control"]
 grow_horizontal = 2
@@ -74,13 +72,6 @@ texture_progress_offset = Vector2( 3, 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="TextureRect" type="TextureRect" parent="MainHudContainer/HealthBarController/HealthBarCenterer"]
-margin_left = 40.0
-margin_top = 8.0
-margin_right = 40.0
-margin_bottom = 8.0
-texture = SubResource( 1 )
 
 [node name="HealthBarLabel" type="MarginContainer" parent="MainHudContainer/HealthBarController"]
 margin_left = 24.0
