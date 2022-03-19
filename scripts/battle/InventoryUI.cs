@@ -58,6 +58,9 @@ namespace ProjectOriginality.Battle
             UpdateInventory();
         }
 
+        /// <summary>
+        /// Updates the inventory button icons, enabling them as required.
+        /// </summary>
         public void UpdateInventory()
         {
             for (int i = 0; i < PlayerStatus.MaxInventorySize; i++)
@@ -80,11 +83,15 @@ namespace ProjectOriginality.Battle
 
         public void OnUseItem(int slot)
         {
+            Global.Assert(InventoryOpen);
+
             GD.Print(slot);
+            LockInventory();
 
             _itemSelected = slot;
             var targetSelector = _targetSelectorObj.Instance<BattleTargetSelectorController>();
             targetSelector.Connect(nameof(BattleTargetSelectorController.PressedLocation), this, nameof(HandleTargetSelectorLocation), flags: (uint)ConnectFlags.Oneshot);
+            targetSelector.Connect(nameof(BattleTargetSelectorController.Canceled), this, nameof(HandleTargetSelectorCancel), flags: (uint)ConnectFlags.Oneshot);
             GetParent().AddChild(targetSelector);
         }
 
@@ -96,11 +103,25 @@ namespace ProjectOriginality.Battle
             PlayerStatus.Inventory.RemoveAt(_itemSelected);
             PlayerStatus.SortInventory();
 
-            UpdateInventory();
+            CloseInventory();
+        }
+
+        public void HandleTargetSelectorCancel()
+        {
+            UpdateInventory(); // This just reenabled the correct buttons...
+        }
+
+        private void LockInventory()
+        {
+            foreach (Button button in _inventoryButtons)
+            {
+                button.Disabled = true;
+            }
         }
 
         public void CloseInventory()
         {
+            LockInventory();
             _buttonPanel.Hide();
             InventoryOpen = false;
             EmitSignal(nameof(InventoryToggled), false);
@@ -108,6 +129,7 @@ namespace ProjectOriginality.Battle
 
         public void OpenInventory()
         {
+            UpdateInventory();
             _buttonPanel.Show();
             InventoryOpen = true;
             EmitSignal(nameof(InventoryToggled), true);
