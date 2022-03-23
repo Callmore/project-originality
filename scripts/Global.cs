@@ -4,12 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectOriginality.Party;
+using Godot;
 
 namespace ProjectOriginality
 {
     public static class Global
     {
-        public static List<PartyMember> PlayerParty { get; } = new List<PartyMember>();
+        public static PackedScene[,] NextBattleEnemyArrangement
+        {
+            get => _nextBattleEnemyArrangement;
+            set
+            {
+                if (value.GetLength(0) != 2 || value.GetLength(1) != 3)
+                {
+                    throw new ArgumentException("Array size should be [2,3]");
+                }
+                _nextBattleEnemyArrangement = value;
+            }
+        }
+        private static PackedScene[,] _nextBattleEnemyArrangement = null;
 
         public static void Assert(bool test)
         {
@@ -26,5 +39,6 @@ namespace ProjectOriginality
                 throw new Exception(message);
             }
         }
+
     }
 }

@@ -21,6 +21,7 @@ _global_script_class_icons={
 [application]
 
 config/name="ProjectOriginality"
+run/main_scene="res://scenes/battle_select.tscn"
 config/icon="res://icon.png"
 
 [gdnative]

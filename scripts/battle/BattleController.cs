@@ -19,10 +19,10 @@ namespace ProjectOriginality.Battle
 
         public bool BattleOver { get; private set; } = false;
 
-        private Unit[,] _playerBoard = new Unit[2, 3];
-        private Node2D[,] _playerBoardLocators = new Node2D[2, 3];
-        private Unit[,] _enemyBoard = new Unit[2, 3];
-        private Node2D[,] _enemyBoardLocators = new Node2D[2, 3];
+        private Unit[,] _playerBoard = new Unit[LineCount, LaneCount];
+        private Node2D[,] _playerBoardLocators = new Node2D[LineCount, LaneCount];
+        private Unit[,] _enemyBoard = new Unit[LineCount, LaneCount];
+        private Node2D[,] _enemyBoardLocators = new Node2D[LineCount, LaneCount];
 
         // Timer finished sets
         public HashSet<Unit> WindupTimerFinished = new HashSet<Unit>();
@@ -44,6 +44,9 @@ namespace ProjectOriginality.Battle
 
         private const string GroupUnit = "unit";
 
+        public const int LineCount = 2;
+        public const int LaneCount = 3;
+
         private Unit SpawnUnit(int x, int y, bool enemy, PackedScene unitObj, int level = 1)
         {
             Unit unit = unitObj.Instance<Unit>();
@@ -51,6 +54,7 @@ namespace ProjectOriginality.Battle
             {
                 _enemyBoardLocators[x, y].AddChild(unit);
                 _enemyBoard[x, y] = unit;
+                unit.Enemy = true;
             }
             else
             {
@@ -81,9 +85,9 @@ namespace ProjectOriginality.Battle
         {
             for (BoardSide side = BoardSide.Player; side <= BoardSide.Enemy; side++)
             {
-                for (int x = 0; x < 2; x++)
+                for (int x = 0; x < LineCount; x++)
                 {
-                    for (int y = 0; y < 3; y++)
+                    for (int y = 0; y < LaneCount; y++)
                     {
                         Node2D locator = _objLocator.Instance<Node2D>();
                         locator.AddToGroup(side == BoardSide.Player ? GroupLocatorPlayer : GroupLocatorEnemy);
@@ -114,10 +118,15 @@ namespace ProjectOriginality.Battle
         {
             // TODO: Make encounters and have units positioned in specific locations
 
-            for (int y = 0; y < 3; y++)
+            for (int x = 0; x < LineCount; x++)
             {
-                Unit enemyUnit = SpawnUnit(1, y, true, GD.Load<PackedScene>("res://objects/battle_unit/units/dev_enemy.tscn"));
-                enemyUnit.Enemy = true;
+                for (int y = 0; y < LaneCount; y++)
+                {
+                    if (Global.NextBattleEnemyArrangement[x, y] != null)
+                    {
+                        SpawnUnit(x, y, true, Global.NextBattleEnemyArrangement[x, y]); //;
+                    }
+                }
             }
         }
 
@@ -272,9 +281,9 @@ namespace ProjectOriginality.Battle
         {
             // Get all cells that contain something
             List<Point> targets = new List<Point>();
-            for (int x = 0; x < 2; x++)
+            for (int x = 0; x < LineCount; x++)
             {
-                for (int y = 0; y < 3; y++)
+                for (int y = 0; y < LaneCount; y++)
                 {
                     if (_playerBoard[x, y] != null)
                     {
@@ -290,9 +299,9 @@ namespace ProjectOriginality.Battle
 
         public (BoardSide, Point) FindUnitLocation(Unit unit)
         {
-            for (int x = 0; x < 2; x++)
+            for (int x = 0; x < LineCount; x++)
             {
-                for (int y = 0; y < 3; y++)
+                for (int y = 0; y < LaneCount; y++)
                 {
                     if (_playerBoard[x, y] == unit)
                     {
@@ -307,7 +316,21 @@ namespace ProjectOriginality.Battle
             throw new InvalidOperationException($"Unknown unit {unit}.");
         }
 
-        private void EndBattle(BoardSide winner)
+        private void SaveUnitsToPartyMembers()
+        {
+            for (int x = 0; x < _playerBoard.GetLength(0); x++)
+            {
+                for (int y = 0; y < _playerBoard.GetLength(1); y++)
+                {
+                    if (_playerBoard[x, y] != null)
+                    {
+                        _playerBoard[x, y].UpdatePartyMember();
+                    }
+                }
+            }
+        }
+
+        private async void EndBattle(BoardSide winner)
         {
             PauseBattleTimers();
             GD.Print($"{winner} win.");
@@ -324,8 +347,14 @@ namespace ProjectOriginality.Battle
 
             BattleOver = true;
 
+            await ToSignal(GetNode<AnimationPlayer>("BattleAnimation"), "animation_finished");
             // Usually there would be something that would happen here but we're just gonna load the battle select menu and exit this mess.
-            //GetTree().ChangeSceneTo(_scnBattleSelect);
+
+            if (winner == BoardSide.Player)
+            {
+                SaveUnitsToPartyMembers();
+            }
+            GetTree().ChangeSceneTo(_scnBattleSelect);
         }
 
         private bool IsUnitAlive(Unit unit)

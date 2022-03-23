@@ -111,6 +111,7 @@ namespace ProjectOriginality.Battle.Units
         public Action<Unit> OnDieFunc { private get; set; }
 
         private bool _setupFromParty = false;
+        public PartyMember PartyMemberRef { get; private set; } = null;
 
         public override void _Ready()
         {
@@ -176,7 +177,13 @@ namespace ProjectOriginality.Battle.Units
             }
             Level = member.Level;
 
+            PartyMemberRef = member;
             _setupFromParty = true;
+        }
+
+        public void UpdatePartyMember()
+        {
+            PartyMemberRef.UpdateStatusFromUnit(this);
         }
 
         protected abstract IEnemyAttack GetAIAttackScript();
