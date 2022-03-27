@@ -23,6 +23,7 @@ namespace ProjectOriginality.Party
         public abstract UnitSkill DefaultCharacterSkill { get; }
         public abstract List<UnitSkill> LearnableSkills { get; }
         public abstract PackedScene UnitObject { get; }
+        public abstract Texture UnitTexture { get; }
         public BattleLoc BattleLocation { get; set; } = new BattleLoc(1, 1);
 
         public PartyMember()

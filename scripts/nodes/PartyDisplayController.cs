@@ -56,9 +56,19 @@ namespace ProjectOriginality.Nodes
 
             _healthBar.Value = member.Health;
             _healthBar.MaxValue = member.MaxHealth;
-            _healthBarLabel.Text = $"{member.Health}/{member.MaxHealth}";
 
-            _memberIcon.Texture = GD.Load<Texture>("res://res/unit.png");
+            if (member.Health > 0)
+            {
+                _healthBarLabel.Text = $"{member.Health}/{member.MaxHealth}";
+                _memberIcon.RectRotation = 90;
+            }
+            else
+            {
+                _healthBarLabel.Text = "DOWN";
+                _memberIcon.RectRotation = 0;
+            }
+
+            _memberIcon.Texture = member.UnitTexture;
         }
 
         /// <summary>

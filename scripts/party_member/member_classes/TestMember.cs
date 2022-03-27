@@ -39,5 +39,6 @@ namespace ProjectOriginality.Party.Classes
         );
         public override List<UnitSkill> LearnableSkills { get; } = new List<UnitSkill>();
         public override PackedScene UnitObject { get; } = GD.Load<PackedScene>("res://objects/battle_unit/units/dev.tscn");
+        public override Texture UnitTexture { get; } = GD.Load<Texture>("res://res/unit.png");
     }
 }
