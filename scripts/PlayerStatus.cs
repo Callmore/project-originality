@@ -26,13 +26,13 @@ namespace ProjectOriginality
             new ItemPowder(),
         };
 
-        private static readonly Point[] _preferedSpotOrder = new Point[] {
-            new Point(1, 1),
-            new Point(1, 2),
-            new Point(1, 0),
-            new Point(0, 1),
-            new Point(0, 2),
-            new Point(0, 0),
+        private static readonly BattleLoc[] _preferedSpotOrder = new BattleLoc[] {
+            new BattleLoc(1, 1),
+            new BattleLoc(1, 2),
+            new BattleLoc(1, 0),
+            new BattleLoc(0, 1),
+            new BattleLoc(0, 2),
+            new BattleLoc(0, 0),
         };
 
         public static void SortInventory()
@@ -46,8 +46,9 @@ namespace ProjectOriginality
         /// <param name="member">Initialised party member to add.</param>
         public static void AddPartyMember(PartyMember member)
         {
+            BattleLoc partyLocation = FindFreeSpot();
             _playerParty.Add(member);
-            member.BattleLocation = FindFreeSpot();
+            member.BattleLocation = partyLocation;
         }
 
         /// <summary>
@@ -55,9 +56,9 @@ namespace ProjectOriginality
         /// </summary>
         /// <returns>A free point.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        private static Point FindFreeSpot()
+        private static BattleLoc FindFreeSpot()
         {
-            foreach (Point point in _preferedSpotOrder)
+            foreach (BattleLoc point in _preferedSpotOrder)
             {
                 if (!_playerParty.Any(member => member.BattleLocation == point))
                 {

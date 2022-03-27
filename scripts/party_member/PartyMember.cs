@@ -17,16 +17,20 @@ namespace ProjectOriginality.Party
         public int Experiance { get; protected set; } = 0;
         public int Level { get; protected set; } = 1;
         public List<UnitSkill> LearntSkills = new List<UnitSkill>(3);
+        public abstract UnitSkill DefaultAttackSkill { get; }
+
+        public abstract UnitSkill DefaultDefendSkill { get; }
+        public abstract UnitSkill DefaultCharacterSkill { get; }
         public abstract List<UnitSkill> LearnableSkills { get; }
         public abstract PackedScene UnitObject { get; }
-        public Point BattleLocation { get; set; } = new Point(1, 1);
+        public BattleLoc BattleLocation { get; set; } = new BattleLoc(1, 1);
 
         public PartyMember()
         {
             Health = MaxHealth;
         }
 
-        public PartyMember(Point initalBattleLocation)
+        public PartyMember(BattleLoc initalBattleLocation)
         {
             Health = MaxHealth;
             BattleLocation = initalBattleLocation;

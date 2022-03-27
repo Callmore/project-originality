@@ -7,6 +7,7 @@ using ProjectOriginality.Battle.Units;
 using ProjectOriginality.Battle.Status;
 using ProjectOriginality.Enums;
 using ProjectOriginality.Models;
+using ProjectOriginality.Party;
 
 namespace ProjectOriginality.Battle
 {
@@ -81,6 +82,14 @@ namespace ProjectOriginality.Battle
             return unit;
         }
 
+        private Unit SpawnPartyMember(PartyMember member)
+        {
+            Unit unit = SpawnUnit(member.BattleLocation.Line, member.BattleLocation.Lane, false, member.UnitObject);
+            unit.UpdateStatsFromPartyMember(member);
+
+            return unit;
+        }
+
         private void SpawnBattlePoints()
         {
             for (BoardSide side = BoardSide.Player; side <= BoardSide.Enemy; side++)
@@ -111,7 +120,12 @@ namespace ProjectOriginality.Battle
         private void SpawnPlayerUnits()
         {
             // TODO: Get the player's units.
-            Unit unit = SpawnUnit(1, 1, false, GD.Load<PackedScene>("res://objects/battle_unit/units/dev.tscn"));
+            //Unit unit = SpawnUnit(1, 1, false, GD.Load<PackedScene>("res://objects/battle_unit/units/dev.tscn"));
+
+            foreach (PartyMember member in PlayerStatus.PlayerParty)
+            {
+                SpawnPartyMember(member);
+            }
         }
 
         private void SpawnEnemyUnits()
@@ -277,17 +291,17 @@ namespace ProjectOriginality.Battle
             return false;
         }
 
-        public Point GetRandomEnemyTargetPosition()
+        public BattleLoc GetRandomEnemyTargetPosition()
         {
             // Get all cells that contain something
-            List<Point> targets = new List<Point>();
+            List<BattleLoc> targets = new List<BattleLoc>();
             for (int x = 0; x < LineCount; x++)
             {
                 for (int y = 0; y < LaneCount; y++)
                 {
-                    if (_playerBoard[x, y] != null)
+                    if (_playerBoard[x, y] != null && !_playerBoard[x, y].Dead)
                     {
-                        targets.Add(new Point(x, y));
+                        targets.Add(new BattleLoc(x, y));
                     }
                 }
             }
@@ -297,7 +311,7 @@ namespace ProjectOriginality.Battle
             return targets[(int)GD.Randi() % targets.Count];
         }
 
-        public (BoardSide, Point) FindUnitLocation(Unit unit)
+        public (BoardSide, BattleLoc) FindUnitLocation(Unit unit)
         {
             for (int x = 0; x < LineCount; x++)
             {
@@ -305,11 +319,11 @@ namespace ProjectOriginality.Battle
                 {
                     if (_playerBoard[x, y] == unit)
                     {
-                        return (BoardSide.Player, new Point(x, y));
+                        return (BoardSide.Player, new BattleLoc(x, y));
                     }
                     else if (_enemyBoard[x, y] == unit)
                     {
-                        return (BoardSide.Enemy, new Point(x, y));
+                        return (BoardSide.Enemy, new BattleLoc(x, y));
                     }
                 }
             }
@@ -364,14 +378,14 @@ namespace ProjectOriginality.Battle
 
         private void OnUnitDie(Unit unit)
         {
-            (BoardSide side, Point unitLocation) = FindUnitLocation(unit);
+            (BoardSide side, BattleLoc unitLocation) = FindUnitLocation(unit);
             switch (side)
             {
                 case BoardSide.Player:
-                    _playerBoard[unitLocation.X, unitLocation.Y] = null;
+                    _playerBoard[unitLocation.Line, unitLocation.Lane] = null;
                     break;
                 case BoardSide.Enemy:
-                    _enemyBoard[unitLocation.X, unitLocation.Y] = null;
+                    _enemyBoard[unitLocation.Line, unitLocation.Lane] = null;
                     break;
             }
 
@@ -401,9 +415,9 @@ namespace ProjectOriginality.Battle
             }
         }
 
-        public Unit GetUnitAt(BoardSide side, Point position)
+        public Unit GetUnitAt(BoardSide side, BattleLoc position)
         {
-            return GetUnitAt(side, position.X, position.Y);
+            return GetUnitAt(side, position.Line, position.Lane);
         }
 
         public void PauseBattleTimers(bool paused = true)
@@ -468,7 +482,7 @@ namespace ProjectOriginality.Battle
         {
             Global.Assert(IsInstanceValid(_unitWaitingForSkill));
 
-            _unitWaitingForSkill.UseSkill(skill, new Point(targetX, targetY));
+            _unitWaitingForSkill.UseSkill(skill, new BattleLoc(targetX, targetY));
         }
 
         #endregion
