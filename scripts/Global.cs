@@ -10,6 +10,9 @@ namespace ProjectOriginality
 {
     public static class Global
     {
+        // TODO: Replace with own RNG system for consistant results between seeds.
+        public static RandomNumberGenerator Rng { get; } = new RandomNumberGenerator();
+
         public static PackedScene[,] NextBattleEnemyArrangement
         {
             get => _nextBattleEnemyArrangement;
