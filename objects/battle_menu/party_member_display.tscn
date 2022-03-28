@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://res/health_bar/border.png" type="Texture" id=1]
-[ext_resource path="res://res/health_bar/fg.png" type="Texture" id=2]
+[ext_resource path="res://images/health_bar/border.png" type="Texture" id=1]
+[ext_resource path="res://images/health_bar/fg.png" type="Texture" id=2]
 [ext_resource path="res://scripts/nodes/PartyDisplayController.cs" type="Script" id=3]
+[ext_resource path="res://images/placeholder/units/unit.png" type="Texture" id=4]
 
 [sub_resource type="StyleBoxFlat" id=6]
 bg_color = Color( 0.521569, 0, 0, 0.513726 )
@@ -45,6 +46,8 @@ margin_left = -48.0
 margin_right = 48.0
 margin_bottom = 96.0
 rect_min_size = Vector2( 96, 96 )
+rect_pivot_offset = Vector2( 48, 48 )
+texture = ExtResource( 4 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 anchor_left = 0.5

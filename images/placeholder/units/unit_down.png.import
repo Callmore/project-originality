@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/breaking-chain.png-714b538897339e3fb3efa85651961251.stex"
+path="res://.import/unit_down.png-de734960ffe286e13dcadec4863c5c6e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://res/gameicons/breaking-chain.png"
-dest_files=[ "res://.import/breaking-chain.png-714b538897339e3fb3efa85651961251.stex" ]
+source_file="res://images/placeholder/units/unit_down.png"
+dest_files=[ "res://.import/unit_down.png-de734960ffe286e13dcadec4863c5c6e.stex" ]
 
 [params]
 

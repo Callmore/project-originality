@@ -2,7 +2,7 @@
 
 [ext_resource path="res://objects/status_effect/base_effect.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/battle/status/effects/StatusEffectBlock.cs" type="Script" id=2]
-[ext_resource path="res://res/gameicons/shield-reflect.png" type="Texture" id=3]
+[ext_resource path="res://images/gameicons/shield-reflect.png" type="Texture" id=3]
 
 [node name="StatusEffectBlock" instance=ExtResource( 1 )]
 script = ExtResource( 2 )

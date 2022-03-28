@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/pringle.png-4378f1d26e4aac8c5522edca83d51951.stex"
+path="res://.import/fg.png-c215684d3295d0a057b29258fc2cb637.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://res/placeholder/pringle.png"
-dest_files=[ "res://.import/pringle.png-4378f1d26e4aac8c5522edca83d51951.stex" ]
+source_file="res://images/health_bar/fg.png"
+dest_files=[ "res://.import/fg.png-c215684d3295d0a057b29258fc2cb637.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

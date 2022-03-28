@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/border.png-a6b5b89f99a19acbb45dc67cc325057c.stex"
+path="res://.import/spear_down.png-3dcc5343dddeb0d69889c8b9a237a177.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://res/health_bar/border.png"
-dest_files=[ "res://.import/border.png-a6b5b89f99a19acbb45dc67cc325057c.stex" ]
+source_file="res://images/placeholder/units/spear_down.png"
+dest_files=[ "res://.import/spear_down.png-3dcc5343dddeb0d69889c8b9a237a177.stex" ]
 
 [params]
 
