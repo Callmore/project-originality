@@ -8,6 +8,7 @@ using ProjectOriginality.Battle.Status;
 using ProjectOriginality.Enums;
 using ProjectOriginality.Models;
 using ProjectOriginality.Party;
+using System.Text;
 
 namespace ProjectOriginality.Battle
 {
@@ -308,7 +309,26 @@ namespace ProjectOriginality.Battle
 
             Global.Assert(targets.Count != 0, "targets is {}");
 
-            return targets[(int)GD.Randi() % targets.Count];
+            // TODO: colapse since this is only needed to fix a bug
+            int idx = Global.Rng.RandiRange(0, targets.Count - 1); //(int)GD.Randi() % targets.Count;
+
+            BattleLoc target;
+            try
+            {
+                target = targets[idx];
+            }
+            catch (Exception e)
+            {
+                if (e is ArgumentOutOfRangeException)
+                {
+                    GD.Print("Got out of range!");
+                    GD.Print($"Index: {idx}");
+                    GD.Print($"Values {string.Join(", ", targets)}");
+                }
+                throw;
+            }
+
+            return target;
         }
 
         public (BoardSide, BattleLoc) FindUnitLocation(Unit unit)
