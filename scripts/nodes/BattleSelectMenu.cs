@@ -29,11 +29,8 @@ namespace ProjectOriginality.Nodes
         {
             base._Ready();
 
-            if (!_initialisedTeam)
-            {
-                _initialisedTeam = true;
-                PlayerStatus.AddPartyMember(new TestMember());
-            }
+            _initialisedTeam = true;
+            PlayerStatus.AddPartyMember(new TestMember());
 
             _battleScene = GD.Load<PackedScene>(_battleScenePath);
             _partyDisplayContainer = GetNode<Node>(_partyDisplayContainerNode);
