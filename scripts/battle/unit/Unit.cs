@@ -75,7 +75,7 @@ namespace ProjectOriginality.Battle.Units
         public double AttackRecoveryTimer { get; private set; }
 
         public UnitSkill QueuedSkill { get; private set; }
-        public Point SkillBoardTarget { get; private set; }
+        public BattleLoc SkillBoardTarget { get; private set; }
 
         public bool Enemy
         {
@@ -111,6 +111,7 @@ namespace ProjectOriginality.Battle.Units
         public Action<Unit> OnDieFunc { private get; set; }
 
         private bool _setupFromParty = false;
+        public PartyMember PartyMemberRef { get; private set; } = null;
 
         public override void _Ready()
         {
@@ -131,7 +132,7 @@ namespace ProjectOriginality.Battle.Units
             _spriteNode.Offset = new Vector2(0, -texture.GetHeight() / 2);
 
             QueuedSkill = BasicAttack;
-            SkillBoardTarget = new Point(1, 1);
+            SkillBoardTarget = new BattleLoc(1, 1);
 
             //_attackWindupTimer.Start(GD.Randf());
             AttackRecoveryTimer = GD.Randf();
@@ -176,7 +177,16 @@ namespace ProjectOriginality.Battle.Units
             }
             Level = member.Level;
 
+            PartyMemberRef = member;
             _setupFromParty = true;
+
+            EmitSignal(nameof(HealthModified), _health, _health);
+            EmitSignal(nameof(MaxHealthModified), _maxHealth, _maxHealth);
+        }
+
+        public void UpdatePartyMember()
+        {
+            PartyMemberRef.UpdateStatusFromUnit(this);
         }
 
         protected abstract IEnemyAttack GetAIAttackScript();
@@ -205,11 +215,11 @@ namespace ProjectOriginality.Battle.Units
 
         }
 
-        public void UseSkill(SkillSlot skill, Point target)
+        public void UseSkill(SkillSlot skill, BattleLoc target)
         {
             UseSkill(GetSkill(skill), target);
         }
-        public void UseSkill(UnitSkill skill, Point target)
+        public void UseSkill(UnitSkill skill, BattleLoc target)
         {
             Global.Assert(skill.Valid);
 
@@ -298,7 +308,7 @@ namespace ProjectOriginality.Battle.Units
 
         public bool SkillHasValidTarget(UnitSkill skill)
         {
-            (BoardSide side, Point position) = Controller.FindUnitLocation(this);
+            (BoardSide side, BattleLoc position) = Controller.FindUnitLocation(this);
 
             if (skill.Activate.Target == SkillTarget.Self)
             {
@@ -311,7 +321,7 @@ namespace ProjectOriginality.Battle.Units
                 {
                     for (int y = 0; y < 3; y++)
                     {
-                        Unit target = Controller.GetUnitAt(side, new Point(x, y));
+                        Unit target = Controller.GetUnitAt(side, new BattleLoc(x, y));
                         if (target != null && skill.Usable(target))
                         {
                             return true;
@@ -419,13 +429,13 @@ namespace ProjectOriginality.Battle.Units
                 UnitSkill skill = _AIAttackScript.Next();
                 if (SkillHasValidTarget(skill))
                 {
-                    Point skillTarget = Controller.GetRandomEnemyTargetPosition();
+                    BattleLoc skillTarget = Controller.GetRandomEnemyTargetPosition();
                     UseSkill(_AIAttackScript.Next(), skillTarget);
                     _AIAttackScript.Advance();
                 }
                 else
                 {
-                    (_, Point location) = Controller.FindUnitLocation(this);
+                    (_, BattleLoc location) = Controller.FindUnitLocation(this);
                     UseSkill(SkillNoOp, location);
                 }
             }

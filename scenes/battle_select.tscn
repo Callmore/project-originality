@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scripts/nodes/BattleSelectMenu.cs" type="Script" id=1]
+[ext_resource path="res://objects/battle_menu/party_member_display.tscn" type="PackedScene" id=3]
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -9,6 +10,8 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+_battleScenePath = "res://scenes/battle.tscn"
+_partyDisplayContainerNode = NodePath("CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer/GridContainer")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 anchor_right = 1.0
@@ -17,53 +20,119 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
-margin_left = 459.0
-margin_top = 234.0
-margin_right = 564.0
-margin_bottom = 366.0
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
+margin_left = 320.0
+margin_top = 108.0
+margin_right = 703.0
+margin_bottom = 492.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer"]
+[node name="PanelContainer2" type="PanelContainer" parent="CenterContainer/HBoxContainer"]
+margin_right = 274.0
+margin_bottom = 384.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/HBoxContainer/PanelContainer2"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 267.0
+margin_bottom = 377.0
+
+[node name="Label" type="Label" parent="CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer"]
+margin_right = 260.0
+margin_bottom = 14.0
+text = "Your party"
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer"]
+margin_top = 18.0
+margin_right = 260.0
+margin_bottom = 22.0
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer"]
+margin_top = 26.0
+margin_right = 260.0
+margin_bottom = 370.0
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PartyDisplay00" parent="CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer/GridContainer" instance=ExtResource( 3 )]
+mouse_filter = 0
+
+[node name="PartyDisplay10" parent="CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer/GridContainer" instance=ExtResource( 3 )]
+margin_left = 132.0
+margin_right = 260.0
+
+[node name="PartyDisplay01" parent="CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer/GridContainer" instance=ExtResource( 3 )]
+margin_top = 116.0
+margin_bottom = 228.0
+
+[node name="PartyDisplay11" parent="CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer/GridContainer" instance=ExtResource( 3 )]
+margin_left = 132.0
+margin_top = 116.0
+margin_right = 260.0
+margin_bottom = 228.0
+
+[node name="PartyDisplay02" parent="CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer/GridContainer" instance=ExtResource( 3 )]
+margin_top = 232.0
+margin_bottom = 344.0
+
+[node name="PartyDisplay12" parent="CenterContainer/HBoxContainer/PanelContainer2/VBoxContainer/GridContainer" instance=ExtResource( 3 )]
+margin_left = 132.0
+margin_top = 232.0
+margin_right = 260.0
+margin_bottom = 344.0
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer/HBoxContainer"]
+margin_left = 278.0
+margin_top = 126.0
+margin_right = 383.0
+margin_bottom = 258.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/HBoxContainer/PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 98.0
 margin_bottom = 125.0
 
-[node name="Label" type="Label" parent="CenterContainer/PanelContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer"]
 margin_right = 91.0
 margin_bottom = 14.0
 text = "Select a battle"
 
-[node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer"]
 margin_top = 18.0
 margin_right = 91.0
 margin_bottom = 22.0
 
-[node name="ButtonTestBattle" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
+[node name="ButtonTestBattle" type="Button" parent="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer"]
 margin_top = 26.0
 margin_right = 91.0
 margin_bottom = 46.0
 text = "Test battle"
 
-[node name="ButtonUnfairBattle" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
+[node name="ButtonUnfairBattle" type="Button" parent="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer"]
 margin_top = 50.0
 margin_right = 91.0
 margin_bottom = 70.0
 text = "Unfair battle"
 
-[node name="ButtonTeamTest" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
+[node name="ButtonTeamTest" type="Button" parent="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer"]
 margin_top = 74.0
 margin_right = 91.0
 margin_bottom = 94.0
 text = "Team test"
 
-[node name="ButtonTeamFight" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
+[node name="ButtonTeamFight" type="Button" parent="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer"]
 margin_top = 98.0
 margin_right = 91.0
 margin_bottom = 118.0
 text = "Team fight"
 
-[connection signal="pressed" from="CenterContainer/PanelContainer/VBoxContainer/ButtonTestBattle" to="." method="OnButtonPush" binds= [ 0 ]]
-[connection signal="pressed" from="CenterContainer/PanelContainer/VBoxContainer/ButtonUnfairBattle" to="." method="OnButtonPush" binds= [ 1 ]]
-[connection signal="pressed" from="CenterContainer/PanelContainer/VBoxContainer/ButtonTeamTest" to="." method="OnButtonPush" binds= [ 2 ]]
-[connection signal="pressed" from="CenterContainer/PanelContainer/VBoxContainer/ButtonTeamFight" to="." method="OnButtonPush" binds= [ 3 ]]
+[connection signal="pressed" from="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer/ButtonTestBattle" to="." method="OnButtonPush" binds= [ 0 ]]
+[connection signal="pressed" from="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer/ButtonUnfairBattle" to="." method="OnButtonPush" binds= [ 1 ]]
+[connection signal="pressed" from="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer/ButtonTeamTest" to="." method="OnButtonPush" binds= [ 2 ]]
+[connection signal="pressed" from="CenterContainer/HBoxContainer/PanelContainer/VBoxContainer/ButtonTeamFight" to="." method="OnButtonPush" binds= [ 3 ]]

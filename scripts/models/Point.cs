@@ -2,15 +2,38 @@ using System;
 
 namespace ProjectOriginality.Models
 {
-    public struct Point
+    public struct BattleLoc
     {
-        public int X;
-        public int Y;
+        public int Line;
+        public int Lane;
 
-        public Point(int _x, int _y)
+        public BattleLoc(int line, int lane)
         {
-            X = _x;
-            Y = _y;
+            Line = line;
+            Lane = lane;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is BattleLoc point &&
+                   Line == point.Line &&
+                   Lane == point.Lane;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 1861411795;
+            hashCode = hashCode * -1521134295 + Line.GetHashCode();
+            hashCode = hashCode * -1521134295 + Lane.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(BattleLoc pointA, BattleLoc pointB) => pointA.Line == pointB.Line && pointA.Lane == pointB.Lane;
+        public static bool operator !=(BattleLoc pointA, BattleLoc pointB) => pointA.Line != pointB.Line || pointA.Lane != pointB.Lane;
+
+        public override string ToString()
+        {
+            return $"{nameof(BattleLoc)}({Line}, {Lane})";
         }
     }
 }
