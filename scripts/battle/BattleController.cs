@@ -8,6 +8,7 @@ using ProjectOriginality.Battle.Status;
 using ProjectOriginality.Enums;
 using ProjectOriginality.Models;
 using ProjectOriginality.Party;
+using System.Text;
 
 namespace ProjectOriginality.Battle
 {
@@ -382,10 +383,10 @@ namespace ProjectOriginality.Battle
             switch (side)
             {
                 case BoardSide.Player:
-                    _playerBoard[unitLocation.Line, unitLocation.Lane] = null;
+                    //_playerBoard[unitLocation.Line, unitLocation.Lane] = null;
                     break;
                 case BoardSide.Enemy:
-                    _enemyBoard[unitLocation.Line, unitLocation.Lane] = null;
+                    //_enemyBoard[unitLocation.Line, unitLocation.Lane] = null;
                     break;
             }
 
