@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/shield-reflect.png-b5596ad0f37914065034d82d9c725564.stex"
+path="res://.import/boxer_down.png-6e34d4f215f579acd31af9117cb5060d.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://res/gameicons/shield-reflect.png"
-dest_files=[ "res://.import/shield-reflect.png-b5596ad0f37914065034d82d9c725564.stex" ]
+source_file="res://images/placeholder/units/boxer_down.png"
+dest_files=[ "res://.import/boxer_down.png-6e34d4f215f579acd31af9117cb5060d.stex" ]
 
 [params]
 

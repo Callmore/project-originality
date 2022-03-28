@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/placeholder_circle.png-f778e47af0642de9f75b61671861b5ff.stex"
+path="res://.import/feral.png-af48c8f95b0e7a83d01012a7e74fe6f7.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://res/placeholder/placeholder_circle.png"
-dest_files=[ "res://.import/placeholder_circle.png-f778e47af0642de9f75b61671861b5ff.stex" ]
+source_file="res://images/placeholder/units/feral.png"
+dest_files=[ "res://.import/feral.png-af48c8f95b0e7a83d01012a7e74fe6f7.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

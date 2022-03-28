@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/potion-ball.png-d848f8ec3ab29a00845aaa8d9a0a6a1b.stex"
+path="res://.import/powder.png-6b5b987610a8eaf93bfb2d7f839080de.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://res/gameicons/potion-ball.png"
-dest_files=[ "res://.import/potion-ball.png-d848f8ec3ab29a00845aaa8d9a0a6a1b.stex" ]
+source_file="res://images/gameicons/powder.png"
+dest_files=[ "res://.import/powder.png-6b5b987610a8eaf93bfb2d7f839080de.stex" ]
 
 [params]
 

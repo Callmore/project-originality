@@ -2,7 +2,7 @@
 
 [ext_resource path="res://objects/status_effect/base_effect.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/battle/status/effects/StatusEffectWeak.cs" type="Script" id=2]
-[ext_resource path="res://res/gameicons/breaking-chain.png" type="Texture" id=3]
+[ext_resource path="res://images/gameicons/breaking-chain.png" type="Texture" id=3]
 
 [node name="StatusEffectWeak" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
