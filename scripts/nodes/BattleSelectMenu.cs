@@ -35,7 +35,7 @@ namespace ProjectOriginality.Nodes
                 // TODO: Store party members somewhere sensible instead of just loading them on the fly.
 
                 PartyMemberResource resource;
-                switch (Global.Rng.RandiRange(0, 3)) // FIXME: Cases should denote different characters.
+                switch (Global.Rng.RandiRange(0, 3))
                 {
                     case 0:
                         resource = GD.Load<PartyMemberResource>("res://resources/party/spear.tres");
