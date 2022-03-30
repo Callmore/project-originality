@@ -2,7 +2,6 @@ using Godot;
 using System;
 using ProjectOriginality;
 using ProjectOriginality.Party;
-using ProjectOriginality.Party.Classes;
 using ProjectOriginality.Battle;
 using ProjectOriginality.Models;
 using System.Linq;
@@ -32,7 +31,7 @@ namespace ProjectOriginality.Nodes
 
             if (!_initialisedTeam)
             {
-                PlayerStatus.AddPartyMember((PartyMember)GD.Load<PartyMember>("res://resources/party/sword.tres").Duplicate());
+                PlayerStatus.AddPartyMember(GD.Load<PartyMemberResource>("res://resources/party/sword.tres"));
                 _initialisedTeam = true;
             }
 

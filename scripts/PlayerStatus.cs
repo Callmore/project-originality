@@ -51,6 +51,11 @@ namespace ProjectOriginality
             member.BattleLocation = partyLocation;
         }
 
+        public static void AddPartyMember(PartyMemberResource resource)
+        {
+            AddPartyMember(PartyMember.FromResource(resource));
+        }
+
         /// <summary>
         /// Find a free slot in the party member list.
         /// </summary>
