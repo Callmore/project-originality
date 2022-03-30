@@ -68,7 +68,7 @@ namespace ProjectOriginality.Nodes
                 _memberIcon.RectRotation = 0;
             }
 
-            _memberIcon.Texture = member.UnitTexture;
+            _memberIcon.Texture = member.UnitRes.Frames.GetFrame("idle", 0);
         }
 
         /// <summary>

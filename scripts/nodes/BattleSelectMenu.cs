@@ -6,6 +6,7 @@ using ProjectOriginality.Party.Classes;
 using ProjectOriginality.Battle;
 using ProjectOriginality.Models;
 using System.Linq;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Nodes
 {
@@ -29,8 +30,11 @@ namespace ProjectOriginality.Nodes
         {
             base._Ready();
 
-            _initialisedTeam = true;
-            PlayerStatus.AddPartyMember(new TestMember());
+            if (!_initialisedTeam)
+            {
+                PlayerStatus.AddPartyMember((PartyMember)GD.Load<PartyMember>("res://resources/party/sword.tres").Duplicate());
+                _initialisedTeam = true;
+            }
 
             _battleScene = GD.Load<PackedScene>(_battleScenePath);
             _partyDisplayContainer = GetNode<Node>(_partyDisplayContainerNode);
@@ -56,7 +60,7 @@ namespace ProjectOriginality.Nodes
                 case 0:
                     BeginBattle(new[,] {
                         {null,null,null},
-                        {GD.Load<PackedScene>("res://objects/battle_unit/units/dev_enemy.tscn"),GD.Load<PackedScene>("res://objects/battle_unit/units/dev_enemy.tscn"),GD.Load<PackedScene>("res://objects/battle_unit/units/dev_enemy.tscn")}
+                        {GD.Load<UnitResource>("res://resources/units/enemy/sword_enemy.tres"),GD.Load<UnitResource>("res://resources/units/enemy/sword_enemy.tres"),GD.Load<UnitResource>("res://resources/units/enemy/sword_enemy.tres")}
                     });
                     break;
                 case 1:
@@ -70,7 +74,7 @@ namespace ProjectOriginality.Nodes
             }
         }
 
-        private void BeginBattle(PackedScene[,] enemyArrangement)
+        private void BeginBattle(UnitResource[,] enemyArrangement)
         {
             if (enemyArrangement.GetLength(0) != BattleController.LineCount || enemyArrangement.GetLength(1) != BattleController.LaneCount)
             {

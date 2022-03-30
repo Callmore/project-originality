@@ -5,6 +5,7 @@ using ProjectOriginality.Models;
 using ProjectOriginality.Enums;
 using ProjectOriginality.Inventory;
 using ProjectOriginality.Battle.Units;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Inventory.Items
 {
@@ -13,7 +14,7 @@ namespace ProjectOriginality.Inventory.Items
         public override string ItemName { get; } = "Heal";
 
         public override UnitSkill UseSkill { get; } = new UnitSkill(
-                "", "", 0, 0, 0, (Unit unit) => true, new AttackInfo(heal: 10, target: SkillTarget.Board | SkillTarget.Friendly)
+                name: "", description: "", usable: SkillUsability.TargetMissingHealth, heal: 10, target: SkillTarget.Board | SkillTarget.Friendly
             );
 
         public override string IconResourcePath { get; } = "res://res/gameicons/potion-ball.png";

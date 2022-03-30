@@ -2,6 +2,7 @@ using System;
 using Godot;
 using ProjectOriginality.Battle.Units;
 using ProjectOriginality.Enums;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Battle
 {
@@ -134,13 +135,12 @@ namespace ProjectOriginality.Battle
             GD.Print(skill);
 
             UnitSkill pickedSkill = _targetUnit.GetSkill(skill);
-            Global.Assert(pickedSkill.Valid);
             _selectedSkill = skill;
 
             DisableSkillButtons();
 
             // TODO: Replace this with a better system for target selection
-            if (pickedSkill.Activate.Target.HasFlag(SkillTarget.Self))
+            if (pickedSkill.Target.HasFlag(SkillTarget.Self))
             {
                 EmitSignal(nameof(BattleSkillMenuUsedSkill), _selectedSkill, 0, 0);
                 ExitSkillMenu();

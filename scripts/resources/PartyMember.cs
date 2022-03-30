@@ -7,24 +7,39 @@ using System.Threading.Tasks;
 using ProjectOriginality.Battle.Units;
 using ProjectOriginality;
 using ProjectOriginality.Models;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Party
 {
-    public abstract class PartyMember
+    public class PartyMember : Resource
     {
-        public int Health { get; private set; }
-        public abstract int MaxHealth { get; protected set; }
-        public int Experiance { get; protected set; } = 0;
-        public int Level { get; protected set; } = 1;
-        public List<UnitSkill> LearntSkills = new List<UnitSkill>(3);
-        public abstract UnitSkill DefaultAttackSkill { get; }
+        public int Health;
 
-        public abstract UnitSkill DefaultDefendSkill { get; }
-        public abstract UnitSkill DefaultCharacterSkill { get; }
-        public abstract List<UnitSkill> LearnableSkills { get; }
-        public abstract PackedScene UnitObject { get; }
-        public abstract Texture UnitTexture { get; }
-        public BattleLoc BattleLocation { get; set; } = new BattleLoc(1, 1);
+        [Export]
+        public int MaxHealth = 20;
+
+        public int Experiance = 0;
+
+        public int Level = 1;
+
+        public List<UnitSkill> LearntSkills = new List<UnitSkill>(3);
+
+        [Export]
+        public UnitSkill DefaultAttackSkill = null;
+
+        [Export]
+        public UnitSkill DefaultDefendSkill = null;
+
+        [Export]
+        public UnitSkill DefaultCharacterSkill = null;
+
+        [Export]
+        public List<UnitSkill> LearnableSkills = new List<UnitSkill>();
+
+        [Export]
+        public UnitResource UnitRes = null;
+
+        public BattleLoc BattleLocation = new BattleLoc(1, 1);
 
         public PartyMember()
         {
@@ -35,6 +50,17 @@ namespace ProjectOriginality.Party
         {
             Health = MaxHealth;
             BattleLocation = initalBattleLocation;
+        }
+
+        public PartyMember(int maxHealth = 20, UnitSkill defaultAttackSkill = null, UnitSkill defaultDefendSkill = null, UnitSkill defaultCharacterSkill = null, List<UnitSkill> learnableSkills = null, UnitResource unit = null)
+        {
+            Health = maxHealth;
+            MaxHealth = maxHealth;
+            DefaultAttackSkill = defaultAttackSkill;
+            DefaultDefendSkill = defaultDefendSkill;
+            DefaultCharacterSkill = defaultCharacterSkill;
+            LearnableSkills = learnableSkills;
+            UnitRes = unit;
         }
 
         public void LearnSkill(int skillIndex)
@@ -61,7 +87,7 @@ namespace ProjectOriginality.Party
 
         public Unit GetUnit()
         {
-            Unit unit = UnitObject.Instance<Unit>();
+            Unit unit = Unit.FromPartyMember(this);
             unit.UpdateStatsFromPartyMember(this);
             return unit;
         }

@@ -5,12 +5,13 @@ using ProjectOriginality.Enums;
 using ProjectOriginality.Models;
 using ProjectOriginality.Battle.Units;
 using System.Linq;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Battle.Status
 {
     public struct AttackEventArgs
     {
-        public AttackInfo AttackInfo;
+        public UnitSkill Skill;
     }
 
     public class StatusEffectController : Node
@@ -126,14 +127,6 @@ namespace ProjectOriginality.Battle.Status
         public void UnpauseStatuses()
         {
             OnUnpause?.Invoke(this, null);
-        }
-
-        public AttackInfo CallOnUnitReceveAttack(AttackInfo orignal)
-        {
-            GD.Print("STATUS EFFECTING");
-            AttackEventArgs eventArgs = new AttackEventArgs() { AttackInfo = orignal };
-            OnUnitReceveAttack?.Invoke(this, eventArgs);
-            return eventArgs.AttackInfo;
         }
     }
 }

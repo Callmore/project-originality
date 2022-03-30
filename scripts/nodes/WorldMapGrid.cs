@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using ProjectOriginality.Party;
 using ProjectOriginality.Battle.Units;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Nodes
 {

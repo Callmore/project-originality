@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ProjectOriginality.Party;
 using Godot;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality
 {
@@ -13,7 +14,7 @@ namespace ProjectOriginality
         // TODO: Replace with own RNG system for consistant results between seeds.
         public static RandomNumberGenerator Rng { get; } = new RandomNumberGenerator();
 
-        public static PackedScene[,] NextBattleEnemyArrangement
+        public static UnitResource[,] NextBattleEnemyArrangement
         {
             get => _nextBattleEnemyArrangement;
             set
@@ -25,7 +26,7 @@ namespace ProjectOriginality
                 _nextBattleEnemyArrangement = value;
             }
         }
-        private static PackedScene[,] _nextBattleEnemyArrangement = null;
+        private static UnitResource[,] _nextBattleEnemyArrangement = null;
 
         public static void Assert(bool test)
         {

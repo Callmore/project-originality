@@ -10,6 +10,7 @@ using ProjectOriginality.Models;
 using ProjectOriginality.Enums;
 using ProjectOriginality.Battle.Units.EnemyAttackScripts;
 using ProjectOriginality.Party;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Battle.Units
 {
@@ -18,9 +19,10 @@ namespace ProjectOriginality.Battle.Units
         Attack,
         Hurt,
         Die,
+        Idle,
     }
 
-    public abstract class Unit : Node2D
+    public class Unit : Node2D
     {
         [Signal]
         public delegate void MaxHealthModified(int oldValue, int newValue);
@@ -51,7 +53,6 @@ namespace ProjectOriginality.Battle.Units
 
         private int _health;
 
-        public abstract int BaseMaxHealth { get; }
 
         // These will most likely be used later for mana.
         public int Mana { get; private set; }
@@ -59,9 +60,9 @@ namespace ProjectOriginality.Battle.Units
 
         public int Level { get; private set; }
 
-        public abstract UnitSkill BasicAttack { get; set; }
-        public abstract UnitSkill BasicDefence { get; set; }
-        public abstract UnitSkill CharacterSkill { get; set; }
+        public UnitSkill BasicAttack { get; set; }
+        public UnitSkill BasicDefence { get; set; }
+        public UnitSkill CharacterSkill { get; set; }
 
         public UnitSkill[] Abilities { get; private set; } = new UnitSkill[3];
         public UnitSkill UltimateSkill { get; private set; }
@@ -76,6 +77,8 @@ namespace ProjectOriginality.Battle.Units
 
         public UnitSkill QueuedSkill { get; private set; }
         public BattleLoc SkillBoardTarget { get; private set; }
+
+        private Vector2 _spriteOffset = Vector2.Zero;
 
         public bool Enemy
         {
@@ -100,10 +103,10 @@ namespace ProjectOriginality.Battle.Units
         private Queue<UnitAnimation> _animationQueue = new Queue<UnitAnimation>();
         private const int AnimationQueueMax = 3;
         private bool _playingAnimation = false;
-        private Sprite _spriteNode;
+        private AnimatedSprite _spriteNode;
 
         // AI things
-        private IEnemyAttack _AIAttackScript;
+        private EnemyAttackScript _AIAttackScript;
 
         public BattleController Controller { private get; set; }
         public Action<Unit> OnWindupTimerFinish { private get; set; }
@@ -118,18 +121,10 @@ namespace ProjectOriginality.Battle.Units
             base._Ready();
 
             _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
-            _spriteNode = GetNode<Sprite>("Sprite");
+            _spriteNode = GetNode<AnimatedSprite>("AnimatedSprite");
             StatusEffectController = GetNode<StatusEffectController>("StatusEffectController");
 
-            if (!_setupFromParty)
-            {
-                _health = BaseMaxHealth;
-                _maxHealth = BaseMaxHealth;
-            }
-
-            Texture texture = GD.Load<Texture>("res://res/unit.png");
-            _spriteNode.Texture = texture;
-            _spriteNode.Offset = new Vector2(0, -texture.GetHeight() / 2);
+            _spriteNode.Offset = _spriteOffset;
 
             QueuedSkill = BasicAttack;
             SkillBoardTarget = new BattleLoc(1, 1);
@@ -137,7 +132,9 @@ namespace ProjectOriginality.Battle.Units
             //_attackWindupTimer.Start(GD.Randf());
             AttackRecoveryTimer = GD.Randf();
 
-            _AIAttackScript = GetAIAttackScript();
+            //_AIAttackScript = GetAIAttackScript();
+
+            PlayAnimation(UnitAnimation.Idle);
         }
 
         public override void _Process(float delta)
@@ -189,7 +186,7 @@ namespace ProjectOriginality.Battle.Units
             PartyMemberRef.UpdateStatusFromUnit(this);
         }
 
-        protected abstract IEnemyAttack GetAIAttackScript();
+        //protected abstract IEnemyAttack GetAIAttackScript();
 
         public UnitSkill GetSkill(SkillSlot skill)
         {
@@ -221,8 +218,6 @@ namespace ProjectOriginality.Battle.Units
         }
         public void UseSkill(UnitSkill skill, BattleLoc target)
         {
-            Global.Assert(skill.Valid);
-
             GD.Print($"SKILL - NAME: {skill.Name}");
 
             QueuedSkill = skill;
@@ -235,10 +230,10 @@ namespace ProjectOriginality.Battle.Units
 
         public void Hurt(int amount)
         {
-            Hurt(new AttackInfo(amount));
+            Hurt(new UnitSkill(damage: amount));
         }
 
-        public void Hurt(AttackInfo attack)
+        public void Hurt(UnitSkill attack)
         {
 
             int amount = attack.Damage;
@@ -308,11 +303,16 @@ namespace ProjectOriginality.Battle.Units
 
         public bool SkillHasValidTarget(UnitSkill skill)
         {
+            if (skill == null)
+            {
+                return false;
+            }
+
             (BoardSide side, BattleLoc position) = Controller.FindUnitLocation(this);
 
-            if (skill.Activate.Target == SkillTarget.Self)
+            if (skill.Target == SkillTarget.Self)
             {
-                return skill.Usable(this);
+                return true; // TODO: Replace true with a function to check if skill usablity is true.
             }
             else
             {
@@ -322,7 +322,7 @@ namespace ProjectOriginality.Battle.Units
                     for (int y = 0; y < 3; y++)
                     {
                         Unit target = Controller.GetUnitAt(side, new BattleLoc(x, y));
-                        if (target != null && skill.Usable(target))
+                        if (target != null && true) // TODO: Replace true with a function to check if skill usablity is true.
                         {
                             return true;
                         }
@@ -340,7 +340,12 @@ namespace ProjectOriginality.Battle.Units
         public bool IsSkillUsable(SkillSlot skillSlot)
         {
             UnitSkill skill = GetSkill(skillSlot);
-            return skill.Valid && SkillHasValidTarget(skill);
+            return SkillHasValidTarget(skill);
+        }
+
+        public bool IsSkillUsable(UnitSkill skill)
+        {
+            return SkillHasValidTarget(skill);
         }
 
         #region Animation
@@ -360,6 +365,9 @@ namespace ProjectOriginality.Battle.Units
                 case UnitAnimation.Die:
                     animationName = "Die";
                     break;
+                case UnitAnimation.Idle:
+                    animationName = "Idle";
+                    break;
                 default:
                     throw new Exception($"No animation found for {nameof(UnitAnimation)} {animation}");
             }
@@ -376,7 +384,7 @@ namespace ProjectOriginality.Battle.Units
 
         private void UpdateFlip(bool newFlip)
         {
-            GetNode<Sprite>("Sprite").FlipH = newFlip;
+            GetNode<AnimatedSprite>("AnimatedSprite").FlipH = newFlip;
         }
 
         private IEnumerable<StatusEffect> GetAllStatusNodes()
@@ -441,10 +449,39 @@ namespace ProjectOriginality.Battle.Units
             }
             else
             {
-                throw new InvalidOperationException("Unit is not marked an enemy and has no attack script set.");
+                throw new InvalidOperationException("Unit is marked as an enemy and has no attack script set.");
             }
         }
 
-        private readonly UnitSkill SkillNoOp = new UnitSkill("No-Op", 5, 5, new AttackInfo(target: SkillTarget.Self));
+        private readonly UnitSkill SkillNoOp = new UnitSkill(name: "No-Op", windup: 5, recoveryTime: 5, target: SkillTarget.Self);
+
+        public static Unit FromResource(UnitResource resource)
+        {
+            // Get unit scene
+            Unit unit = GD.Load<PackedScene>("res://objects/battle_unit/base_unit.tscn").Instance<Unit>();
+            unit._health = resource.MaxHealth;
+            unit._maxHealth = resource.MaxHealth;
+            unit.BasicAttack = resource.BasicAttack;
+            unit.BasicDefence = resource.BasicDefence;
+            unit.CharacterSkill = resource.CharacterSkill;
+            unit._AIAttackScript = (EnemyAttackScript)resource.AIAttackScript?.New() ?? null;
+            unit.GetNode<AnimatedSprite>("AnimatedSprite").Frames = resource.Frames;
+            unit._spriteOffset = resource.SpriteOffset;
+
+            return unit;
+        }
+
+        public static Unit FromPartyMember(PartyMember member)
+        {
+            Unit unit = FromResource(member.UnitRes);
+            unit._health = member.Health;
+            unit._maxHealth = member.MaxHealth;
+            unit.Level = member.Level;
+            unit.BasicAttack = member.DefaultAttackSkill;
+            unit.BasicDefence = member.DefaultDefendSkill;
+            unit.CharacterSkill = member.DefaultCharacterSkill;
+            unit.Abilities = member.LearntSkills.ToArray();
+            return unit;
+        }
     }
 }

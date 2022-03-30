@@ -5,6 +5,7 @@ using ProjectOriginality.Models;
 using ProjectOriginality.Enums;
 using ProjectOriginality.Inventory;
 using ProjectOriginality.Battle.Units;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Inventory.Items
 {
@@ -14,7 +15,9 @@ namespace ProjectOriginality.Inventory.Items
         public override string ItemName { get; } = "Protein POWder";
 
         public override UnitSkill UseSkill { get; } = new UnitSkill(
-            "", "", 0, 0, 0, (Unit unit) => true, new AttackInfo(target: SkillTarget.Board | SkillTarget.Friendly, applyStatuses: new[] { (StatusId.PowderBuff, -1) })
+            usable: SkillUsability.TargetAlive,
+            target: SkillTarget.Board | SkillTarget.Friendly,
+            applyStatuses: new StatusStack[] { new StatusStack(StatusId.PowderBuff) }
         );
 
         public override string IconResourcePath { get; } = "res://res/gameicons/powder.png";

@@ -8,6 +8,7 @@ using ProjectOriginality.Battle.Status;
 using ProjectOriginality.Enums;
 using ProjectOriginality.Models;
 using ProjectOriginality.Party;
+using ProjectOriginality.Resources;
 using System.Text;
 
 namespace ProjectOriginality.Battle
@@ -49,9 +50,9 @@ namespace ProjectOriginality.Battle
         public const int LineCount = 2;
         public const int LaneCount = 3;
 
-        private Unit SpawnUnit(int x, int y, bool enemy, PackedScene unitObj, int level = 1)
+        private Unit SpawnUnit(int x, int y, bool enemy, UnitResource unitRes, int level = 1)
         {
-            Unit unit = unitObj.Instance<Unit>();
+            Unit unit = Unit.FromResource(unitRes);
             if (enemy)
             {
                 _enemyBoardLocators[x, y].AddChild(unit);
@@ -74,7 +75,7 @@ namespace ProjectOriginality.Battle
             GetNode<CanvasLayer>("HudLayer").AddChild(unitUI);
             Transform2D transform = unit.GetGlobalTransformWithCanvas();
             unitUI.RectPosition = transform.origin;
-            unitUI.InitHealthBar(unit.BaseMaxHealth, unit.BaseMaxHealth);
+            unitUI.InitHealthBar(unit.MaxHealth, unit.MaxHealth);
 
             unit.Connect(nameof(Unit.HealthModified), unitUI, nameof(UnitUI.OnHealthChanged));
             unit.Connect(nameof(Unit.MaxHealthModified), unitUI, nameof(UnitUI.OnMaxHealthChanged));
@@ -85,7 +86,7 @@ namespace ProjectOriginality.Battle
 
         private Unit SpawnPartyMember(PartyMember member)
         {
-            Unit unit = SpawnUnit(member.BattleLocation.Line, member.BattleLocation.Lane, false, member.UnitObject);
+            Unit unit = SpawnUnit(member.BattleLocation.Line, member.BattleLocation.Lane, false, member.UnitRes);
             unit.UpdateStatsFromPartyMember(member);
 
             return unit;
@@ -215,7 +216,7 @@ namespace ProjectOriginality.Battle
 
             // Figure out which board we are targeting
             BoardSide targetBoard = unit.Enemy ? BoardSide.Player : BoardSide.Enemy;
-            if (usedSkill.Activate.Target == SkillTarget.Self)
+            if (usedSkill.Target == SkillTarget.Self)
             {
 
             }
@@ -232,10 +233,10 @@ namespace ProjectOriginality.Battle
 
 
             // HELL YEAH WE'RE JUST GONNA ELSEIF THIS MESS
-            SkillTarget target = usedSkill.Activate.Target;
+            SkillTarget target = usedSkill.Target;
             if (target.HasFlag(SkillTarget.Self))
             {
-                ApplyAttackInfo(unit, usedSkill.Activate);
+                ApplyAttackInfo(unit, usedSkill);
             }
             else if (target.HasFlag(SkillTarget.AllSelected))
             {
@@ -250,7 +251,7 @@ namespace ProjectOriginality.Battle
                 // Nothing else matched, this is a single target.
                 Unit targetUnit = GetUnitAt(targetBoard, unit.SkillBoardTarget);
                 Global.Assert(targetUnit != unit);
-                ApplyAttackInfo(targetUnit, usedSkill.Activate.ApplyModifier(unit.GetAttackModifierCalc())); // TODO: Rescale damage based on unit's damage bonus.
+                ApplyAttackInfo(targetUnit, usedSkill, unit.GetAttackModifierCalc()); // TODO: Rescale damage based on unit's damage bonus.
             }
 
             await ToSignal(GetTree().CreateTimer(1), "timeout");
@@ -261,30 +262,30 @@ namespace ProjectOriginality.Battle
         {
             GD.Print(item);
             BoardSide targetBoard = BoardSide.Enemy;
-            if (item.UseSkill.Activate.Target.HasFlag(SkillTarget.Friendly))
+            if (item.UseSkill.Target.HasFlag(SkillTarget.Friendly))
             {
                 targetBoard = BoardSide.Player;
             }
-            ApplyAttackInfo(GetUnitAt(targetBoard, x, y), item.UseSkill.Activate);
+            ApplyAttackInfo(GetUnitAt(targetBoard, x, y), item.UseSkill);
         }
 
-        private bool ApplyAttackInfo(Unit unit, AttackInfo attackInfo)
+        private bool ApplyAttackInfo(Unit unit, UnitSkill skill, BuffCalculator buff = null)
         {
             if (unit != null)
             {
-                if (attackInfo.Damage > 0)
+                if (skill.Damage > 0)
                 {
-                    unit.Hurt(attackInfo.Damage);
+                    unit.Hurt(buff?.Calculate(skill.Damage) ?? skill.Damage);
                 }
 
-                if (attackInfo.Heal > 0)
+                if (skill.Heal > 0)
                 {
-                    unit.Heal(attackInfo.Heal);
+                    unit.Heal(skill.Heal);
                 }
 
-                foreach ((StatusId status, int stacks) in attackInfo.Statuses)
+                foreach (var status in skill.Statuses.AsEnumerable())
                 {
-                    unit.ApplyStatus(status, stacks);
+                    unit.ApplyStatus(status.Status, status.Stacks);
                 }
 
                 return true;
