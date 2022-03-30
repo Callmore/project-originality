@@ -31,7 +31,29 @@ namespace ProjectOriginality.Nodes
 
             if (!_initialisedTeam)
             {
-                PlayerStatus.AddPartyMember(GD.Load<PartyMemberResource>("res://resources/party/sword.tres"));
+                // Pick a random party member
+                // TODO: Store party members somewhere sensible instead of just loading them on the fly.
+
+                PartyMemberResource resource;
+                switch (Global.Rng.RandiRange(0, 3)) // FIXME: Cases should denote different characters.
+                {
+                    case 0:
+                        resource = GD.Load<PartyMemberResource>("res://resources/party/spear.tres");
+                        break;
+                    case 1:
+                        resource = GD.Load<PartyMemberResource>("res://resources/party/feral.tres");
+                        break;
+                    case 2:
+                        resource = GD.Load<PartyMemberResource>("res://resources/party/boxer.tres");
+                        break;
+                    case 3:
+                        resource = GD.Load<PartyMemberResource>("res://resources/party/sword.tres");
+                        break;
+                    default:
+                        throw new Exception("Why did it return an invalid value.");
+                }
+
+                PlayerStatus.AddPartyMember(resource);
                 _initialisedTeam = true;
             }
 
