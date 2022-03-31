@@ -5,6 +5,7 @@ using ProjectOriginality.Party;
 using ProjectOriginality.Inventory;
 using ProjectOriginality.Inventory.Items;
 using System.Collections.ObjectModel;
+using ProjectOriginality.Resources;
 using ProjectOriginality.Models;
 using System.Linq;
 

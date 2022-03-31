@@ -9,7 +9,7 @@ using ProjectOriginality;
 using ProjectOriginality.Models;
 using ProjectOriginality.Resources;
 
-namespace ProjectOriginality.Party
+namespace ProjectOriginality.Resources
 {
     public class PartyMemberResource : Resource
     {

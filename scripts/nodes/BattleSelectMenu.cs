@@ -29,6 +29,8 @@ namespace ProjectOriginality.Nodes
         {
             base._Ready();
 
+            Global.Rng.Randomize(); // TODO: move this to somewhere where the value can be randomised on game startup
+
             if (!_initialisedTeam)
             {
                 // Pick a random party member
@@ -72,6 +74,23 @@ namespace ProjectOriginality.Nodes
             UpdatePartyDisplay();
         }
 
+        private UnitResource RandomUnitResource()
+        {
+            switch (Global.Rng.RandiRange(0, 3))
+            {
+                case 0:
+                    return GD.Load<UnitResource>("res://resources/units/enemy/sword_enemy.tres");
+                case 1:
+                    return GD.Load<UnitResource>("res://resources/units/enemy/spear_enemy.tres");
+                case 2:
+                    return GD.Load<UnitResource>("res://resources/units/enemy/boxer_enemy.tres");
+                case 3:
+                    return GD.Load<UnitResource>("res://resources/units/enemy/feral_enemy.tres");
+                default:
+                    throw new InvalidOperationException("How.");
+            }
+        }
+
         public void OnButtonPush(int buttonID)
         {
             GD.Print($"Got {buttonID}");
@@ -79,12 +98,10 @@ namespace ProjectOriginality.Nodes
             switch (buttonID)
             {
                 case 0:
-                    BeginBattle(new[,] {
-                        {null,null,null},
-                        {GD.Load<UnitResource>("res://resources/units/enemy/sword_enemy.tres"),GD.Load<UnitResource>("res://resources/units/enemy/sword_enemy.tres"),GD.Load<UnitResource>("res://resources/units/enemy/sword_enemy.tres")}
-                    });
+                    BeginBattle(GD.Load<EncounterDefinition>("res://resources/encounters/test_battle.tres"));
                     break;
                 case 1:
+                    BeginBattle(GD.Load<EncounterDefinition>("res://resources/encounters/unfair_battle.tres"));
                     break;
                 case 2:
                     break;
@@ -93,6 +110,11 @@ namespace ProjectOriginality.Nodes
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        public void BeginBattle(EncounterDefinition definition)
+        {
+            BeginBattle(definition.GetEncounterUnits());
         }
 
         private void BeginBattle(UnitResource[,] enemyArrangement)
