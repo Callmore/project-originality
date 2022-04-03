@@ -5,6 +5,7 @@ using ProjectOriginality.Party;
 using ProjectOriginality.Inventory;
 using ProjectOriginality.Inventory.Items;
 using System.Collections.ObjectModel;
+using ProjectOriginality.Resources;
 using ProjectOriginality.Models;
 using System.Linq;
 
@@ -49,6 +50,11 @@ namespace ProjectOriginality
             BattleLoc partyLocation = FindFreeSpot();
             _playerParty.Add(member);
             member.BattleLocation = partyLocation;
+        }
+
+        public static void AddPartyMember(PartyMemberResource resource)
+        {
+            AddPartyMember(PartyMember.FromResource(resource));
         }
 
         /// <summary>

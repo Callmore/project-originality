@@ -1,25 +1,26 @@
 using System;
 using Godot;
 using ProjectOriginality.Models;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Battle.Units.EnemyAttackScripts
 {
-    public class BasicEnemyAttack : IEnemyAttack
+    public class BasicEnemyAttack : EnemyAttackScript
     {
         private UnitSkill[] _skillList = new UnitSkill[] {
-            new UnitSkill("Hit them lamo", 1, 5, new AttackInfo(1)),
-            new UnitSkill("Hit them again", 1, 5, new AttackInfo(2)),
-            new UnitSkill("One more time", 2, 6, new AttackInfo(3)),
+            new UnitSkill(name: "Hit them lamo", windup:1, recoveryTime: 5, damage:1),
+            new UnitSkill(name:"Hit them again", windup:1,recoveryTime: 5, damage: 2),
+            new UnitSkill(name:"One more time",windup: 2,recoveryTime: 6, damage: 3),
         };
 
         private int _currentSkill = 0;
 
-        public UnitSkill Next()
+        public override UnitSkill Next()
         {
             return _skillList[_currentSkill];
         }
 
-        public void Advance()
+        public override void Advance()
         {
             _currentSkill = (_currentSkill + 1) % _skillList.Length;
         }

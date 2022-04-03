@@ -1,19 +1,20 @@
 using System;
 using Godot;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Battle.Units.EnemyAttackScripts
 {
-    public interface IEnemyAttack
+    public abstract class EnemyAttackScript : Reference
     {
         /// <summary>
         /// Get the next attack that should happen.
         /// </summary>
         /// <returns></returns>
-        UnitSkill Next();
+        public abstract UnitSkill Next();
 
         /// <summary>
         /// Advance the script state to get a new attack.
         /// </summary>
-        void Advance();
+        public abstract void Advance();
     }
 }

@@ -2,10 +2,10 @@ using Godot;
 using System;
 using ProjectOriginality;
 using ProjectOriginality.Party;
-using ProjectOriginality.Party.Classes;
 using ProjectOriginality.Battle;
 using ProjectOriginality.Models;
 using System.Linq;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Nodes
 {
@@ -29,8 +29,35 @@ namespace ProjectOriginality.Nodes
         {
             base._Ready();
 
-            _initialisedTeam = true;
-            PlayerStatus.AddPartyMember(new TestMember());
+            Global.Rng.Randomize(); // TODO: move this to somewhere where the value can be randomised on game startup
+
+            if (!_initialisedTeam)
+            {
+                // Pick a random party member
+                // TODO: Store party members somewhere sensible instead of just loading them on the fly.
+
+                PartyMemberResource resource;
+                switch (Global.Rng.RandiRange(0, 3))
+                {
+                    case 0:
+                        resource = GD.Load<PartyMemberResource>("res://resources/party/spear.tres");
+                        break;
+                    case 1:
+                        resource = GD.Load<PartyMemberResource>("res://resources/party/feral.tres");
+                        break;
+                    case 2:
+                        resource = GD.Load<PartyMemberResource>("res://resources/party/boxer.tres");
+                        break;
+                    case 3:
+                        resource = GD.Load<PartyMemberResource>("res://resources/party/sword.tres");
+                        break;
+                    default:
+                        throw new Exception("Why did it return an invalid value.");
+                }
+
+                PlayerStatus.AddPartyMember(resource);
+                _initialisedTeam = true;
+            }
 
             _battleScene = GD.Load<PackedScene>(_battleScenePath);
             _partyDisplayContainer = GetNode<Node>(_partyDisplayContainerNode);
@@ -47,6 +74,23 @@ namespace ProjectOriginality.Nodes
             UpdatePartyDisplay();
         }
 
+        private UnitResource RandomUnitResource()
+        {
+            switch (Global.Rng.RandiRange(0, 3))
+            {
+                case 0:
+                    return GD.Load<UnitResource>("res://resources/units/enemy/sword_enemy.tres");
+                case 1:
+                    return GD.Load<UnitResource>("res://resources/units/enemy/spear_enemy.tres");
+                case 2:
+                    return GD.Load<UnitResource>("res://resources/units/enemy/boxer_enemy.tres");
+                case 3:
+                    return GD.Load<UnitResource>("res://resources/units/enemy/feral_enemy.tres");
+                default:
+                    throw new InvalidOperationException("How.");
+            }
+        }
+
         public void OnButtonPush(int buttonID)
         {
             GD.Print($"Got {buttonID}");
@@ -54,12 +98,10 @@ namespace ProjectOriginality.Nodes
             switch (buttonID)
             {
                 case 0:
-                    BeginBattle(new[,] {
-                        {null,null,null},
-                        {GD.Load<PackedScene>("res://objects/battle_unit/units/dev_enemy.tscn"),GD.Load<PackedScene>("res://objects/battle_unit/units/dev_enemy.tscn"),GD.Load<PackedScene>("res://objects/battle_unit/units/dev_enemy.tscn")}
-                    });
+                    BeginBattle(GD.Load<EncounterDefinition>("res://resources/encounters/test_battle.tres"));
                     break;
                 case 1:
+                    BeginBattle(GD.Load<EncounterDefinition>("res://resources/encounters/unfair_battle.tres"));
                     break;
                 case 2:
                     break;
@@ -70,7 +112,12 @@ namespace ProjectOriginality.Nodes
             }
         }
 
-        private void BeginBattle(PackedScene[,] enemyArrangement)
+        public void BeginBattle(EncounterDefinition definition)
+        {
+            BeginBattle(definition.GetEncounterUnits());
+        }
+
+        private void BeginBattle(UnitResource[,] enemyArrangement)
         {
             if (enemyArrangement.GetLength(0) != BattleController.LineCount || enemyArrangement.GetLength(1) != BattleController.LaneCount)
             {

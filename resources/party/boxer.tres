@@ -1,0 +1,64 @@
+[gd_resource type="Resource" load_steps=10 format=2]
+
+[ext_resource path="res://scripts/resources/PartyMemberResource.cs" type="Script" id=1]
+[ext_resource path="res://scripts/resources/StatusStack.cs" type="Script" id=2]
+[ext_resource path="res://scripts/resources/UnitSkill.cs" type="Script" id=3]
+[ext_resource path="res://resources/units/playable/boxer.tres" type="Resource" id=4]
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 3 )
+Name = "Test attack"
+Description = "Do a thing."
+ManaCost = 0
+Windup = 0.0
+RecoveryTime = 5.0
+Usable = 1
+Damage = 5
+Heal = 0
+_target = 504
+Statuses = [  ]
+
+[sub_resource type="Resource" id=6]
+script = ExtResource( 2 )
+Status = 1
+Stacks = -1
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 3 )
+Name = "Test cool skill"
+Description = "This is a cool skill."
+ManaCost = 10
+Windup = 2.0
+RecoveryTime = 6.0
+Usable = 1
+Damage = 1
+Heal = 0
+_target = 504
+Statuses = [ SubResource( 6 ) ]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 2 )
+Status = 0
+Stacks = 10
+
+[sub_resource type="Resource" id=5]
+script = ExtResource( 3 )
+Name = "Test defend"
+Description = "Block a thing."
+ManaCost = 0
+Windup = 0.0
+RecoveryTime = 5.0
+Usable = 1
+Damage = 0
+Heal = 0
+_target = 508
+Statuses = [ SubResource( 1 ) ]
+
+[resource]
+script = ExtResource( 1 )
+MaxHealth = 20
+DefaultAttackSkill = SubResource( 4 )
+DefaultDefendSkill = SubResource( 5 )
+DefaultCharacterSkill = SubResource( 2 )
+LearnableSkills = [  ]
+UnitRes = ExtResource( 4 )

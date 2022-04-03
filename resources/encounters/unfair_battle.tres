@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=5 format=2]
+
+[ext_resource path="res://scripts/resources/EncounterDefinition.cs" type="Script" id=1]
+[ext_resource path="res://resources/units/enemy/boxer_enemy.tres" type="Resource" id=2]
+[ext_resource path="res://resources/units/enemy/feral_enemy.tres" type="Resource" id=3]
+[ext_resource path="res://resources/units/enemy/spear_enemy.tres" type="Resource" id=4]
+
+[resource]
+script = ExtResource( 1 )
+UnitTopFront = ExtResource( 2 )
+UnitTopBack = ExtResource( 4 )
+UnitMiddleFront = ExtResource( 3 )
+UnitMiddleBack = ExtResource( 2 )
+UnitBottomFront = ExtResource( 4 )
+UnitBottomBack = ExtResource( 3 )

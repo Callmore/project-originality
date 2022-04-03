@@ -1,0 +1,78 @@
+[gd_resource type="Resource" load_steps=12 format=2]
+
+[ext_resource path="res://scripts/resources/UnitResource.cs" type="Script" id=1]
+[ext_resource path="res://scripts/resources/StatusStack.cs" type="Script" id=2]
+[ext_resource path="res://scripts/resources/UnitSkill.cs" type="Script" id=3]
+[ext_resource path="res://images/placeholder/units/feral_down.png" type="Texture" id=4]
+[ext_resource path="res://images/placeholder/units/feral.png" type="Texture" id=5]
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 3 )
+Name = "Test attack"
+Description = "Do a thing."
+ManaCost = 0
+Windup = 0.0
+RecoveryTime = 5.0
+Usable = 1
+Damage = 5
+Heal = 0
+_target = 504
+Statuses = [  ]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 2 )
+Status = 0
+Stacks = 10
+
+[sub_resource type="Resource" id=5]
+script = ExtResource( 3 )
+Name = "Test defend"
+Description = "Block a thing."
+ManaCost = 0
+Windup = 0.0
+RecoveryTime = 5.0
+Usable = 1
+Damage = 0
+Heal = 0
+_target = 508
+Statuses = [ SubResource( 1 ) ]
+
+[sub_resource type="Resource" id=6]
+script = ExtResource( 2 )
+Status = 1
+Stacks = -1
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 3 )
+Name = "Test cool skill"
+Description = "This is a cool skill."
+ManaCost = 10
+Windup = 2.0
+RecoveryTime = 6.0
+Usable = 1
+Damage = 1
+Heal = 0
+_target = 504
+Statuses = [ SubResource( 6 ) ]
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "idle",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "down",
+"speed": 5.0
+} ]
+
+[resource]
+script = ExtResource( 1 )
+MaxHealth = 20
+Frames = SubResource( 3 )
+SpriteOffset = Vector2( 0, -48 )
+BasicAttack = SubResource( 4 )
+BasicDefence = SubResource( 5 )
+CharacterSkill = SubResource( 2 )

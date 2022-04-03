@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://scripts/resources/EncounterDefinition.cs" type="Script" id=1]
+[ext_resource path="res://resources/units/enemy/sword_enemy.tres" type="Resource" id=2]
+
+[resource]
+script = ExtResource( 1 )
+UnitTopFront = ExtResource( 2 )
+UnitMiddleFront = ExtResource( 2 )
+UnitBottomFront = ExtResource( 2 )

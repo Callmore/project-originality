@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using ProjectOriginality.Battle.Units;
+using ProjectOriginality.Resources;
 
 namespace ProjectOriginality.Inventory
 {

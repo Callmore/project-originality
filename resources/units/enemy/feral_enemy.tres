@@ -1,0 +1,26 @@
+[gd_resource type="Resource" load_steps=6 format=2]
+
+[ext_resource path="res://scripts/resources/UnitResource.cs" type="Script" id=1]
+[ext_resource path="res://scripts/battle/unit/enemy_attack_scripts/BasicEnemyAttack.cs" type="Script" id=2]
+[ext_resource path="res://images/placeholder/units/feral_down.png" type="Texture" id=4]
+[ext_resource path="res://images/placeholder/units/feral.png" type="Texture" id=5]
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "idle",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "down",
+"speed": 5.0
+} ]
+
+[resource]
+script = ExtResource( 1 )
+MaxHealth = 10
+Frames = SubResource( 3 )
+SpriteOffset = Vector2( 0, -48 )
+AIAttackScript = ExtResource( 2 )

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://scripts/resources/UnitSkill.cs" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+Name = ""
+Description = ""
+ManaCost = 0
+Windup = 0.0
+RecoveryTime = 0.0
+Usable = 0
+Damage = 0
+Heal = 0
+_target = 504
+Statuses = [  ]
